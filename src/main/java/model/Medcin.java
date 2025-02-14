@@ -1,5 +1,6 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class Medcin {
     private String email;
     private String phone;
     private String specialize;
-    @OneToMany (mappedBy = "medcin", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @OneToMany (mappedBy = "medcin", fetch = FetchType.EAGER)
     private Collection <Appointment> appointments;
 }

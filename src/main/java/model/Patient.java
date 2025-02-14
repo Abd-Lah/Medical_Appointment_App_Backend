@@ -1,5 +1,6 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class Patient {
     private String name;
     private String email;
     private String phone;
+    @JsonManagedReference
     @OneToMany (mappedBy = "patient")
     private Collection <Appointment> appointments;
 }

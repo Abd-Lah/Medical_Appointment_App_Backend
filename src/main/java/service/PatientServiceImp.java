@@ -3,6 +3,7 @@ package service;
 import exceptions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import model.Appointment;
+import model.Medcin;
 import model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,9 @@ import repository.RepoAppointment;
 import repository.RepoConsultation;
 import repository.RepoPatient;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -61,15 +64,23 @@ public class PatientServiceImp implements PatientService {
 
     @Transactional
     @Override
+    public Appointment makeAppointment(Patient patient, Medcin doctor, LocalDateTime date_app) {
+        Appointment appointment = new Appointment(date_app,patient,doctor,null);
+        return repoAppointment.save(appointment);
+    }
+
+    @Transactional
+    @Override
     public void deletePatient(int id) {
         Patient patient = getPatientById(id);
-        getAppointmentsByPatientId(id).forEach(appointment -> {
+        Collection<Appointment> patientAppointment = patient.getAppointments();
+        patientAppointment.forEach(appointment -> {
             if (appointment.getConsultation() != null) {
                 repoConsultation.delete(appointment.getConsultation());
             }
         });
 
-        repoAppointment.deleteAll(getAppointmentsByPatientId(id));
+        repoAppointment.deleteAll(patientAppointment);
 
         repoPatient.delete(patient);
     }
