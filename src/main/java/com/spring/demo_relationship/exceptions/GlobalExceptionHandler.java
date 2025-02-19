@@ -1,4 +1,4 @@
-package exceptions;
+package com.spring.demo_relationship.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

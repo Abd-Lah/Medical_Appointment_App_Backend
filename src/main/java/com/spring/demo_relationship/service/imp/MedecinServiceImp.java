@@ -1,14 +1,15 @@
-package service;
+package com.spring.demo_relationship.service.imp;
 
-import exceptions.ResourceNotFoundException;
+import com.spring.demo_relationship.exceptions.ResourceNotFoundException;
+import com.spring.demo_relationship.service.MedecinService;
 import jakarta.transaction.Transactional;
-import model.Appointment;
-import model.Medcin;
+import com.spring.demo_relationship.model.Appointment;
+import com.spring.demo_relationship.model.Medcin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repository.RepoAppointment;
-import repository.RepoConsultation;
-import repository.RepoMedcin;
+import com.spring.demo_relationship.repository.RepoAppointment;
+import com.spring.demo_relationship.repository.RepoConsultation;
+import com.spring.demo_relationship.repository.RepoMedcin;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +20,6 @@ public class MedecinServiceImp implements MedecinService {
     private final RepoAppointment repoAppointment;
     private final RepoConsultation repoConsultation;
 
-    @Autowired
     public MedecinServiceImp(RepoMedcin repoMedcin, RepoAppointment repoAppointment, RepoConsultation repoConsultation) {
         this.repoMedcin = repoMedcin;
         this.repoAppointment = repoAppointment;

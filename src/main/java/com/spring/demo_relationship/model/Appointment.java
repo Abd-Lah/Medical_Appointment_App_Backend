@@ -1,4 +1,4 @@
-package model;
+package com.spring.demo_relationship.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Data
@@ -17,7 +16,7 @@ import java.util.Date;
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private LocalDateTime date_app;
     @JsonBackReference
     @ManyToOne
@@ -28,11 +27,4 @@ public class Appointment {
     @JsonManagedReference
     @OneToOne
     private Consultation consultation;
-
-    public Appointment(LocalDateTime dateApp, Patient patient, Medcin doctor, Consultation consultation) {
-        this.date_app = dateApp;
-        this.patient = patient;
-        this.medcin = doctor;
-        this.consultation = consultation;
-    }
 }

@@ -1,15 +1,16 @@
-package controllers;
+package com.spring.demo_relationship.controllers;
 
-import model.Appointment;
-import model.Medcin;
-import model.Patient;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.spring.demo_relationship.commands.PatientCommand;
+import com.spring.demo_relationship.dto.AppointmentDto;
+import com.spring.demo_relationship.dto.PatientDto;
+import com.spring.demo_relationship.model.Medcin;
+import com.spring.demo_relationship.model.Patient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import requests.AppointmentRequest;
-import service.MedecinServiceImp;
-import service.PatientServiceImp;
+import com.spring.demo_relationship.commands.AppointmentCommand;
+import com.spring.demo_relationship.service.imp.MedecinServiceImp;
+import com.spring.demo_relationship.service.imp.PatientServiceImp;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,32 +23,31 @@ public class PatientController {
     private final PatientServiceImp patientService;
     private final MedecinServiceImp medecinService;
 
-    @Autowired
     public PatientController(PatientServiceImp patientService, MedecinServiceImp medecinService) {
         this.patientService = patientService;
         this.medecinService = medecinService;
     }
 
     @GetMapping
-    public List<Patient> getPatients() {
+    public List<PatientDto> getPatients() {
         return patientService.getAllPatients();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Patient> getPatientById(@PathVariable int id) {
-        Patient patient = patientService.getPatientById(id);
+    public ResponseEntity<PatientDto> getPatientById(@PathVariable int id) {
+        PatientDto patient = patientService.getPatientById(id);
         return ResponseEntity.ok(patient);
     }
 
     @PostMapping
-    public ResponseEntity<Patient> addPatient(@RequestBody Patient patient) {
-        Patient newPatient = patientService.createPatient(patient);
+    public ResponseEntity<PatientDto> addPatient(@RequestBody Patient patient) {
+        PatientDto newPatient = patientService.createPatient(patient);
         return new ResponseEntity<>(newPatient, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable int id, @RequestBody Patient patient) {
-        Patient updatedPatient = patientService.updatePatient(id, patient);
+    public ResponseEntity<PatientDto> updatePatient(@PathVariable int id, @RequestBody PatientCommand patient) {
+        PatientDto updatedPatient = patientService.updatePatient(id, patient);
         return new ResponseEntity<>(updatedPatient, HttpStatus.OK);
     }
 
@@ -58,12 +58,12 @@ public class PatientController {
     }
 
     @PostMapping("/{patientId}/appointments")
-    public ResponseEntity<Appointment> makeAppointment(
+    public ResponseEntity<AppointmentDto> makeAppointment(
             @PathVariable int patientId,
-            @RequestBody AppointmentRequest appointmentRequest) {
+            @RequestBody AppointmentCommand appointmentRequest) {
 
         // Verify patient existence
-        Patient patient = patientService.getPatientById(patientId);
+        Patient patient = patientService.getById(patientId);
 
         // Verify doctor existence
         Medcin doctor = medecinService.getMedecinById(appointmentRequest.getDoctorId());
@@ -73,7 +73,7 @@ public class PatientController {
         LocalDateTime parsedDate = LocalDateTime.parse(appointmentRequest.getAppointmentDate(), formatter);
 
         // Create and save the appointment
-        Appointment appointment = patientService.makeAppointment(patient, doctor, parsedDate);
+        AppointmentDto appointment = patientService.makeAppointment(patient, doctor, parsedDate);
 
         return new ResponseEntity<>(appointment, HttpStatus.CREATED);
     }

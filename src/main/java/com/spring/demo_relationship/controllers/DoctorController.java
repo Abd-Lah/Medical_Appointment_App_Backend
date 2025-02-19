@@ -1,19 +1,22 @@
-package controllers;
+package com.spring.demo_relationship.controllers;
 
-import model.Medcin;
+import com.spring.demo_relationship.model.Medcin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import service.MedecinServiceImp;
+import com.spring.demo_relationship.service.imp.MedecinServiceImp;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/doctors")
 public class DoctorController {
-    @Autowired
     MedecinServiceImp medecinServiceImp;
+
+    public DoctorController(MedecinServiceImp medecinServiceImp) {
+        this.medecinServiceImp = medecinServiceImp;
+    }
 
     @GetMapping
     public List<Medcin> getAllDoctors() {

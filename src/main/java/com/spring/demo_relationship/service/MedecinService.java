@@ -1,7 +1,7 @@
-package service;
+package com.spring.demo_relationship.service;
 
-import model.Appointment;
-import model.Medcin;
+import com.spring.demo_relationship.model.Appointment;
+import com.spring.demo_relationship.model.Medcin;
 
 import java.util.Collection;
 import java.util.List;

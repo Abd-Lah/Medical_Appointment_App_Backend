@@ -8,9 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 @SpringBootApplication
-@EntityScan(basePackages = "model")
-@EnableJpaRepositories(basePackages = "repository")
-@ComponentScan(basePackages = {"service", "controllers"})
 @CrossOrigin(origins = "*")
 public class DemoRelationshipApplication {
 
