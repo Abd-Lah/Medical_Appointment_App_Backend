@@ -1,6 +1,6 @@
 package com.spring.demo_relationship.dto;
 
-import com.spring.demo_relationship.model.Appointment;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

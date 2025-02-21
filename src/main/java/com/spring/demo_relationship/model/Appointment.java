@@ -1,16 +1,14 @@
 package com.spring.demo_relationship.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Appointment {
@@ -24,7 +22,6 @@ public class Appointment {
     @JsonBackReference
     @ManyToOne
     private Medcin medcin;
-    @JsonManagedReference
     @OneToOne
     private Consultation consultation;
 }

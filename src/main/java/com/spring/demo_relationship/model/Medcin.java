@@ -2,15 +2,13 @@ package com.spring.demo_relationship.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Medcin {
@@ -24,4 +22,5 @@ public class Medcin {
     @JsonManagedReference
     @OneToMany (mappedBy = "medcin", fetch = FetchType.EAGER)
     private List<Appointment> appointments;
+
 }

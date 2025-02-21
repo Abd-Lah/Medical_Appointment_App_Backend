@@ -1,11 +1,9 @@
 package com.spring.demo_relationship.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import com.spring.demo_relationship.model.Consultation;
 import com.spring.demo_relationship.model.Medcin;
 import com.spring.demo_relationship.model.Patient;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -5,7 +5,6 @@ import com.spring.demo_relationship.service.MedecinService;
 import jakarta.transaction.Transactional;
 import com.spring.demo_relationship.model.Appointment;
 import com.spring.demo_relationship.model.Medcin;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.spring.demo_relationship.repository.RepoAppointment;
 import com.spring.demo_relationship.repository.RepoConsultation;

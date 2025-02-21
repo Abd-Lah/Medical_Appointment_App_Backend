@@ -86,7 +86,8 @@ public class PatientServiceImp implements PatientService {
     @Override
     public AppointmentDto makeAppointment(Patient patient, Medcin doctor, LocalDateTime date_app) {
         Appointment appointment = new Appointment(null,date_app,patient,doctor,null);
-        return PatientMapper.INSTANCE.appointmentToAppointmentDto(repoAppointment.save(appointment));
+        repoAppointment.save(appointment);
+        return PatientMapper.INSTANCE.appointmentToAppointmentDto(appointment);
     }
 
     @Transactional
