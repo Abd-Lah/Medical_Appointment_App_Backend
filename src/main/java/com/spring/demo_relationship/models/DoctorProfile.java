@@ -1,0 +1,42 @@
+package com.spring.demo_relationship.models;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "doctor_profiles")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class DoctorProfile extends BaseEntity{
+    @OneToOne
+    @JoinColumn(name = "doctor_id", nullable = false, unique = true)
+    private UserEntity doctor;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
+    private String experience;
+
+    @Column(columnDefinition = "TEXT")
+    private String qualifications;
+
+    private String clinicAddress;
+
+    @Column(nullable = false)
+    private String specialty;
+
+    @Column(nullable = false)
+    private Integer appointmentDuration = 30; // Default 30 minutes
+
+    @Column(nullable = false)
+    private String workingDays;
+
+    @Column(nullable = false, name = "start_time")
+    private String startTime;
+
+    @Column(nullable = false, name = "end_time")
+    private String endTime;
+}
