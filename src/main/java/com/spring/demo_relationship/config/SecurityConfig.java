@@ -1,5 +1,6 @@
 package com.spring.demo_relationship.config;
 
+import com.spring.demo_relationship.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

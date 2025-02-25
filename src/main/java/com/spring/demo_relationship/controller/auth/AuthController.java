@@ -2,7 +2,9 @@ package com.spring.demo_relationship.controller.auth;
 
 
 import com.spring.demo_relationship.commands.LoginCommand;
+import com.spring.demo_relationship.commands.RegisterCommand;
 import com.spring.demo_relationship.models.UserEntity;
+import com.spring.demo_relationship.payload.JwtResponse;
 import com.spring.demo_relationship.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,14 +22,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginCommand login){
-        String token = authService.verify(login);
-        return new ResponseEntity<>(token, HttpStatus.OK);
+    public ResponseEntity<JwtResponse> login(@RequestBody LoginCommand login){
+        JwtResponse user = authService.verify(login);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserEntity user){
-        String token = authService.register(user);
-        return new ResponseEntity<>(token, HttpStatus.CREATED);
+    public ResponseEntity<JwtResponse> register(@RequestBody RegisterCommand user){
+        JwtResponse data = authService.register(user);
+        return new ResponseEntity<>(data, HttpStatus.CREATED);
     }
 }

@@ -2,15 +2,14 @@ package com.spring.demo_relationship.models;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity extends BaseEntity {
@@ -35,4 +34,13 @@ public class UserEntity extends BaseEntity {
 
     @OneToOne(mappedBy = "doctor", cascade = CascadeType.ALL ,fetch = FetchType.EAGER)
     private DoctorProfile doctorProfile;
+
+    public UserEntity(String email, String password, String firstName, String lastName, String phoneNumber, Role role) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
+    }
 }
