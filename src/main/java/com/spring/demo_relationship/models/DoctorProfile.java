@@ -49,4 +49,18 @@ public class DoctorProfile extends BaseEntity{
     public DoctorProfile(UserEntity user) {
         this.doctor = user;
     }
+
+    public void updateDoctorProfile(DoctorProfile doctorProfile) {
+        doctorProfile.setBio(bio);
+        doctorProfile.setExperience(experience);
+        doctorProfile.setQualifications(qualifications);
+        doctorProfile.setClinicAddress(clinicAddress);
+        doctorProfile.setSpecialty(specialty);
+        doctorProfile.setAppointmentDuration(appointmentDuration);
+        doctorProfile.setWorkingDays(workingDays);
+        doctorProfile.setStartTime(startTime);
+        doctorProfile.setBreakTimeStart(breakTimeStart);
+        doctorProfile.setBreakTimeEnd(breakTimeEnd);
+        doctorProfile.setEndTime(endTime);
+    }
 }

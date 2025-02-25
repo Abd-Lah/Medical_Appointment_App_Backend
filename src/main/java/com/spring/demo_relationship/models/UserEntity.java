@@ -43,4 +43,15 @@ public class UserEntity extends BaseEntity {
         this.phoneNumber = phoneNumber;
         this.role = role;
     }
+
+    public UserEntity updateProfile(UserEntity userEntity) {
+        userEntity.setFirstName(firstName);
+        userEntity.setLastName(lastName);
+        userEntity.setEmail(email);
+        userEntity.setPhoneNumber(phoneNumber);
+        userEntity.setRole(role);
+        userEntity.setPassword(password);
+        userEntity.setDoctorProfile(doctorProfile);
+        return userEntity;
+    }
 }
