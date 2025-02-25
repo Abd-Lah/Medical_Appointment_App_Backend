@@ -17,13 +17,17 @@ public class UserEntity extends BaseEntity {
     @Column(unique=true, nullable=false)
     private String email;
 
+    @Column(nullable=false)
     private String password;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable=false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable=false)
     private String lastName;
+
+    @Column(name = "city", nullable=false)
+    private String city;
 
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -35,12 +39,13 @@ public class UserEntity extends BaseEntity {
     @OneToOne(mappedBy = "doctor", cascade = CascadeType.ALL ,fetch = FetchType.EAGER)
     private DoctorProfile doctorProfile;
 
-    public UserEntity(String email, String password, String firstName, String lastName, String phoneNumber, Role role) {
+    public UserEntity(String email, String password, String firstName, String lastName, String phoneNumber, String city, Role role) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
+        this.city = city;
         this.role = role;
     }
 
@@ -51,6 +56,7 @@ public class UserEntity extends BaseEntity {
         userEntity.setPhoneNumber(phoneNumber);
         userEntity.setRole(role);
         userEntity.setPassword(password);
+        userEntity.setCity(city);
         userEntity.setDoctorProfile(doctorProfile);
         return userEntity;
     }

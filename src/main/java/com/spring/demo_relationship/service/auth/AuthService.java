@@ -37,6 +37,9 @@ public class AuthService {
     @Transactional
     public JwtResponse register(RegisterCommand user) {
         user.setPassword(encoder.encode(user.getPassword()));
+        if(Objects.equals(user.getRole().toString(), "ADMIN")) {
+            userRepository.save(user.toUserEntity());
+        }
         if(Objects.equals(user.getRole().toString(), "PATIENT")) {
             userRepository.save(user.toUserEntity());
         }

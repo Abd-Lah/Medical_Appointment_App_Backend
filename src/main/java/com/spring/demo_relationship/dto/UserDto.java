@@ -23,8 +23,7 @@ public class UserDto {
 
     private String lastName;
 
-    private String phoneNumber;
+    private String city;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    private String phoneNumber;
 }

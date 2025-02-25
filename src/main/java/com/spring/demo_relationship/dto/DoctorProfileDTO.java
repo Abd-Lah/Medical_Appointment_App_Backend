@@ -1,6 +1,5 @@
 package com.spring.demo_relationship.dto;
 
-import com.spring.demo_relationship.models.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DoctorProfileDTO {
-    private UserEntity doctor;
 
     private String bio;
 
@@ -21,7 +19,7 @@ public class DoctorProfileDTO {
 
     private String specialty ;
 
-    private Integer appointmentDuration ; // Default 30 minutes
+    private Integer appointmentDuration ;
 
     private String workingDays ;
 

@@ -12,6 +12,7 @@ public class RegisterCommand {
     private String firstName;
     private String lastName;
     private String phoneNumber;
+    private String city;
     private Role role;
 
     public UserEntity toUserEntity() {
@@ -21,6 +22,7 @@ public class RegisterCommand {
                 firstName,
                 lastName,
                 phoneNumber,
+                city,
                 role
         );
     }
