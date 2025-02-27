@@ -7,6 +7,7 @@ import com.spring.demo_relationship.mapper.DoctorMapper;
 import com.spring.demo_relationship.mapper.PatientMapper;
 import com.spring.demo_relationship.models.Role;
 import com.spring.demo_relationship.models.UserEntity;
+import com.spring.demo_relationship.service.user.UserRoleMapperFactory;
 import com.spring.demo_relationship.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,14 +23,17 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserRoleMapperFactory userRoleMapperFactory;
 
     @GetMapping("/user")
     public ResponseEntity<Object> user() {
         UserEntity user = userService.getCurrentUser();
-        if (user.getRole() == Role.ADMIN || user.getRole() == Role.PATIENT) {
-            return new ResponseEntity<>(PatientMapper.INSTANCE.toPatientDto(user), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(DoctorMapper.INSTANCE.toDoctorDto(user), HttpStatus.OK);
+        Object dto = userRoleMapperFactory.getMapper(user.getRole(), user);
+
+        if (dto != null) {
+            return ResponseEntity.ok(dto);
+        } else {
+            return ResponseEntity.status(403).body("Forbidden");
         }
     }
 
@@ -37,17 +41,15 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<?>> users(@PathVariable String search, Pageable pageable) {
         Page<UserEntity> users = userService.getAllUsersByRole(search, pageable);
-        if(search.equals("doctor")){
-            return new ResponseEntity<>(DoctorMapper.INSTANCE.toDoctorDtoPage(users), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(PatientMapper.INSTANCE.toDoctorDtoPage(users), HttpStatus.OK);
-        }
+        Page<?> mappedPage = userRoleMapperFactory.getMapper(Role.valueOf(search.toUpperCase()), users);
+        return ResponseEntity.ok(mappedPage);
     }
+
     @GetMapping("/all_doctors")
     @PreAuthorize("hasAnyRole('ADMIN', 'PATIENT')")
     public ResponseEntity<Page<DoctorDto>> doctors(Pageable pageable) {
         Page<UserEntity> users = userService.getAllUsersByRole("DOCTOR", pageable);
-        return new ResponseEntity<>(DoctorMapper.INSTANCE.toDoctorDtoPage(users), HttpStatus.OK);
+        return new ResponseEntity<>(DoctorMapper.INSTANCE.toDtoPage(users), HttpStatus.OK);
     }
 
     @GetMapping("/doctors")
@@ -61,7 +63,7 @@ public class UserController {
 
         Page<UserEntity> usersPage = userService.getAllDoctors(firstName, lastName, city, specialization, pageable);
 
-        return new ResponseEntity<>(DoctorMapper.INSTANCE.toDoctorDtoPage(usersPage), HttpStatus.OK);
+        return new ResponseEntity<>(DoctorMapper.INSTANCE.toDtoPage(usersPage), HttpStatus.OK);
     }
 
 
@@ -69,22 +71,29 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ADMIN', 'PATIENT')")
     public ResponseEntity<DoctorDto> doctor(@PathVariable String id) {
         UserEntity user = userService.getDoctor(id);
-        return new ResponseEntity<>(DoctorMapper.INSTANCE.toDoctorDto(user), HttpStatus.OK);
+        return new ResponseEntity<>(DoctorMapper.INSTANCE.toDto(user), HttpStatus.OK);
     }
 
     @PutMapping("/user/update_profile")
     public ResponseEntity<?> updateUser(@RequestBody UserCommand userCommand) {
-        if(userService.getCurrentUser().getRole() == Role.ADMIN || userService.getCurrentUser().getRole() == Role.PATIENT){
-            return new ResponseEntity<>(PatientMapper.INSTANCE.toPatientDto(userService.updateProfile(userCommand)) ,HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(DoctorMapper.INSTANCE.toDoctorDto(userService.updateProfile(userCommand)),HttpStatus.OK);
+        UserEntity currentUser = userService.getCurrentUser();
+
+        UserEntity updatedUser = userService.updateProfile(userCommand);
+
+        Object dto = userRoleMapperFactory.getMapper(currentUser.getRole(), updatedUser);
+
+        if (dto != null) {
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
         }
     }
+
 
     @PutMapping("/user/update_doctor_profile")
     @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<DoctorDto> updateUser(@RequestBody DoctorProfileCommand doctorProfileCommand) {
-        return new ResponseEntity<>(DoctorMapper.INSTANCE.toDoctorDto(userService.updateProfile(doctorProfileCommand)),HttpStatus.OK);
+        return new ResponseEntity<>(DoctorMapper.INSTANCE.toDto(userService.updateProfile(doctorProfileCommand)),HttpStatus.OK);
     }
 
 }
