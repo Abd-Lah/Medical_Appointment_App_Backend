@@ -1,5 +1,7 @@
 package com.spring.demo_relationship.controller.user;
 
+import com.spring.demo_relationship.commands.DoctorProfileCommand;
+import com.spring.demo_relationship.commands.UserCommand;
 import com.spring.demo_relationship.dto.DoctorDto;
 import com.spring.demo_relationship.mapper.DoctorMapper;
 import com.spring.demo_relationship.mapper.PatientMapper;
@@ -12,10 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -71,6 +70,21 @@ public class UserController {
     public ResponseEntity<DoctorDto> doctor(@PathVariable String id) {
         UserEntity user = userService.getDoctor(id);
         return new ResponseEntity<>(DoctorMapper.INSTANCE.toDoctorDto(user), HttpStatus.OK);
+    }
+
+    @PutMapping("/user/update_profile")
+    public ResponseEntity<?> updateUser(@RequestBody UserCommand userCommand) {
+        if(userService.getCurrentUser().getRole() == Role.ADMIN || userService.getCurrentUser().getRole() == Role.PATIENT){
+            return new ResponseEntity<>(PatientMapper.INSTANCE.toPatientDto(userService.updateProfile(userCommand)) ,HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(DoctorMapper.INSTANCE.toDoctorDto(userService.updateProfile(userCommand)),HttpStatus.OK);
+        }
+    }
+
+    @PutMapping("/user/update_doctor_profile")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<DoctorDto> updateUser(@RequestBody DoctorProfileCommand doctorProfileCommand) {
+        return new ResponseEntity<>(DoctorMapper.INSTANCE.toDoctorDto(userService.updateProfile(doctorProfileCommand)),HttpStatus.OK);
     }
 
 }

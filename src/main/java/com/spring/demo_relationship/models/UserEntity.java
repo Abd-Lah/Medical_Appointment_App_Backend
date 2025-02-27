@@ -1,6 +1,7 @@
 package com.spring.demo_relationship.models;
 
 
+import com.spring.demo_relationship.commands.UserCommand;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -49,15 +50,11 @@ public class UserEntity extends BaseEntity {
         this.role = role;
     }
 
-    public UserEntity updateProfile(UserEntity userEntity) {
-        userEntity.setFirstName(firstName);
-        userEntity.setLastName(lastName);
-        userEntity.setEmail(email);
-        userEntity.setPhoneNumber(phoneNumber);
-        userEntity.setRole(role);
-        userEntity.setPassword(password);
-        userEntity.setCity(city);
-        userEntity.setDoctorProfile(doctorProfile);
-        return userEntity;
+    public UserEntity updateUserProfile(UserCommand user) {
+        this.setFirstName(user.getFirstName());
+        this.setLastName(user.getLastName());
+        this.setPhoneNumber(user.getPhone());
+        this.setCity(user.getCity());
+        return this;
     }
 }

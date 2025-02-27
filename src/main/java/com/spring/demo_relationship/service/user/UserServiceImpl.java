@@ -1,5 +1,7 @@
 package com.spring.demo_relationship.service.user;
 
+import com.spring.demo_relationship.commands.DoctorProfileCommand;
+import com.spring.demo_relationship.commands.UserCommand;
 import com.spring.demo_relationship.exceptions.ResourceNotFoundException;
 import com.spring.demo_relationship.models.DoctorProfile;
 import com.spring.demo_relationship.models.Role;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,19 +35,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity updateProfile(UserEntity userEntity) {
+    @Transactional
+    public UserEntity updateProfile(UserCommand userCommand) {
         UserEntity existingUser = getCurrentUser();
-        existingUser.updateProfile(userEntity);
-        userRepository.save(userEntity);
+        existingUser.updateUserProfile(userCommand);
+        userRepository.save(existingUser);
         return existingUser;
     }
 
     @Override
-    public DoctorProfile updateProfile(DoctorProfile doctorProfile) {
+    @Transactional
+    public UserEntity updateProfile(DoctorProfileCommand profile) {
         UserEntity existingUser = getCurrentUser();
-        DoctorProfile existingDoctorProfile = doctorProfileRepository.getDoctorProfileByDoctor(existingUser);
-        existingDoctorProfile.updateDoctorProfile(doctorProfile);
-        return doctorProfileRepository.save(existingDoctorProfile);
+        DoctorProfile existingDoctorProfile = existingUser.getDoctorProfile();
+        existingDoctorProfile.updateDoctorProfile(profile);
+        doctorProfileRepository.save(existingDoctorProfile);
+        return existingUser;
     }
 
     @Override

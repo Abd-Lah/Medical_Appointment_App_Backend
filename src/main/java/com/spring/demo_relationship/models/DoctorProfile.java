@@ -1,6 +1,7 @@
 package com.spring.demo_relationship.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.spring.demo_relationship.commands.DoctorProfileCommand;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -52,17 +53,18 @@ public class DoctorProfile extends BaseEntity{
         this.doctor = user;
     }
 
-    public void updateDoctorProfile(DoctorProfile doctorProfile) {
-        doctorProfile.setBio(bio);
-        doctorProfile.setExperience(experience);
-        doctorProfile.setQualifications(qualifications);
-        doctorProfile.setClinicAddress(clinicAddress);
-        doctorProfile.setSpecialty(specialty);
-        doctorProfile.setAppointmentDuration(appointmentDuration);
-        doctorProfile.setWorkingDays(workingDays);
-        doctorProfile.setStartTime(startTime);
-        doctorProfile.setBreakTimeStart(breakTimeStart);
-        doctorProfile.setBreakTimeEnd(breakTimeEnd);
-        doctorProfile.setEndTime(endTime);
+    public DoctorProfile updateDoctorProfile(DoctorProfileCommand p) {
+        this.setBio(p.getBio());
+        this.setExperience(p.getExperience());
+        this.setQualifications(p.getQualifications());
+        this.setClinicAddress(p.getClinicAddress());
+        this.setSpecialty(p.getSpecialty());
+        this.setAppointmentDuration(p.getAppointmentDuration());
+        this.setWorkingDays(p.getWorkingDays());
+        this.setStartTime(p.getStartTime());
+        this.setBreakTimeStart(p.getBreakTimeStart());
+        this.setBreakTimeEnd(p.getBreakTimeEnd());
+        this.setEndTime(p.getEndTime());
+        return this;
     }
 }
