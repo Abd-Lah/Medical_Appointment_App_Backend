@@ -1,30 +1,30 @@
 package com.spring.demo_relationship.mapper;
 
 import com.spring.demo_relationship.dto.DoctorDto;
-import com.spring.demo_relationship.dto.DoctorProfileDTO;
-import com.spring.demo_relationship.dto.UserDto;
-import com.spring.demo_relationship.models.DoctorProfile;
 import com.spring.demo_relationship.models.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper
 public interface DoctorMapper {
-    // Static reference to the Mapper instance
     DoctorMapper INSTANCE = Mappers.getMapper(DoctorMapper.class);
 
-    // Mapping from User entity to UserDTO
-    UserDto userToUserDTO(UserEntity user);
+    @Mapping(target = "doctorProfileDTO", source = "doctorProfile")
+    DoctorDto toDoctorDto(UserEntity userEntity);
+    UserEntity toUserEntity(DoctorDto userDto);
+    // Add this method to map Page<UserEntity> to Page<UserDto>
+    @Mapping(target = "doctorProfileDTO", source = "doctorProfile")
+    default Page<DoctorDto> toDoctorDtoPage(Page<UserEntity> userEntitiesPage) {
+        List<DoctorDto> doctorDtos = userEntitiesPage.getContent().stream()
+                .map(this::toDoctorDto) // Map each UserEntity to UserDto
+                .collect(Collectors.toList());
 
-    // Mapping from DoctorProfile entity to DoctorProfileDTO
-    DoctorProfileDTO doctorProfileToDoctorProfileDTO(DoctorProfile doctorProfile);
-
-    // Mapping from UserEntity and DoctorProfile to DoctorDto (composing both)
-    @Mapping(source = "user", target = "user")  // Mapping from "user" to "user" field in DoctorDto
-    @Mapping(source = "doctorProfile", target = "profile")  // Mapping from "doctorProfile" to "doctorProfile" field in DoctorDto
-    DoctorDto doctorToDoctorDTO(UserEntity user, DoctorProfile doctorProfile);
+        return new PageImpl<>(doctorDtos, userEntitiesPage.getPageable(), userEntitiesPage.getTotalElements());
+    }
 }
-
-
-

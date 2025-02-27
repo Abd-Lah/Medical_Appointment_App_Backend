@@ -1,15 +1,25 @@
 package com.spring.demo_relationship.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-@Getter
-@Setter
+@AllArgsConstructor
 public class DoctorDto {
-    private UserDto user;
-    private DoctorProfileDTO profile;
+
+    private String id;
+
+    private String email;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String city;
+
+    private String phoneNumber;
+
+    private DoctorProfileDTO doctorProfileDTO ;
 }

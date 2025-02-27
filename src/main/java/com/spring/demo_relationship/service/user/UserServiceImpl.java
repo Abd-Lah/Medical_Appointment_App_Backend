@@ -7,6 +7,8 @@ import com.spring.demo_relationship.models.UserEntity;
 import com.spring.demo_relationship.repository.DoctorProfileRepository;
 import com.spring.demo_relationship.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -46,15 +48,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserEntity> getAllUsersByRole(String role) {
+    public Page<UserEntity> getAllUsersByRole(String role, Pageable pageable) {
         Role roleEnum = Role.valueOf(role.toUpperCase());
-        return userRepository.findUsersByRole(roleEnum);
+        return userRepository.findUsersByRole(roleEnum, pageable);
     }
 
     @Override
-    public List<UserEntity> getAllDoctors(String firstName, String lastName, String city) {
-        return userRepository.getDoctors(firstName,lastName,city);
+    public Page<UserEntity> getAllDoctors(String firstName, String lastName, String city, String specialization, Pageable pageable) {
+        return userRepository.getDoctors(firstName, lastName, city, specialization, pageable);
     }
+
 
     @Override
     public UserEntity getDoctor(String id) {

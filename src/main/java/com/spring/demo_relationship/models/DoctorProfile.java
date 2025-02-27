@@ -1,5 +1,6 @@
 package com.spring.demo_relationship.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class DoctorProfile extends BaseEntity{
     @OneToOne
     @JoinColumn(name = "doctor_id", nullable = false, unique = true)
+    @JsonIgnore
     private UserEntity doctor;
 
     @Column(columnDefinition = "TEXT")

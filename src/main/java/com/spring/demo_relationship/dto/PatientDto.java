@@ -1,9 +1,5 @@
 package com.spring.demo_relationship.dto;
 
-import com.spring.demo_relationship.models.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,13 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class PatientDto {
 
     private String id;
 
     private String email;
-
-    private String password;
 
     private String firstName;
 
@@ -26,4 +20,5 @@ public class UserDto {
     private String city;
 
     private String phoneNumber;
+
 }
