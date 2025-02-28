@@ -70,8 +70,9 @@ public class UserServiceImpl implements UserService {
         UserEntity doctor = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User with id : " + id + " not found"));
         if (doctor.getRole() == Role.DOCTOR) {
             return doctor;
+        }else{
+            throw new ResourceNotFoundException("Doctor with id : " + id + " not found");
         }
-        return null;
     }
 
     @Override

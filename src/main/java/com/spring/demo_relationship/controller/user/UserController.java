@@ -4,7 +4,6 @@ import com.spring.demo_relationship.commands.DoctorProfileCommand;
 import com.spring.demo_relationship.commands.UserCommand;
 import com.spring.demo_relationship.dto.DoctorDto;
 import com.spring.demo_relationship.mapper.DoctorMapper;
-import com.spring.demo_relationship.mapper.PatientMapper;
 import com.spring.demo_relationship.models.Role;
 import com.spring.demo_relationship.models.UserEntity;
 import com.spring.demo_relationship.service.user.UserRoleMapperFactory;
@@ -30,11 +29,7 @@ public class UserController {
         UserEntity user = userService.getCurrentUser();
         Object dto = userRoleMapperFactory.getMapper(user.getRole(), user);
 
-        if (dto != null) {
-            return ResponseEntity.ok(dto);
-        } else {
-            return ResponseEntity.status(403).body("Forbidden");
-        }
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/all/{search}")
@@ -82,11 +77,7 @@ public class UserController {
 
         Object dto = userRoleMapperFactory.getMapper(currentUser.getRole(), updatedUser);
 
-        if (dto != null) {
-            return new ResponseEntity<>(dto, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
-        }
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
 

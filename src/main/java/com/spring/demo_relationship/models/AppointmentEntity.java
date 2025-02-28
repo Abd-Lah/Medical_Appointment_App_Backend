@@ -28,4 +28,6 @@ public class AppointmentEntity extends BaseEntity {
 
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private ReportEntity report;
+
+
 }
