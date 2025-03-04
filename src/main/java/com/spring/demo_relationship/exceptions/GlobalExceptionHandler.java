@@ -30,6 +30,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    // Handle InvalidRequestException
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidAppointment(ValidationException ex, WebRequest request) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Validation");
+        response.put("message", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
     // Handle Generic Exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGlobalException(Exception ex, WebRequest request) {

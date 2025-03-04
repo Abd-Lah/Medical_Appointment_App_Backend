@@ -1,6 +1,8 @@
 package com.spring.demo_relationship.service.patient;
 
 import com.spring.demo_relationship.commands.AppointmentCommand;
+import com.spring.demo_relationship.dto.DoctorProfileDTO;
+import com.spring.demo_relationship.mapper.DoctorProfileMapper;
 import com.spring.demo_relationship.models.AppointmentEntity;
 import com.spring.demo_relationship.models.UserEntity;
 import com.spring.demo_relationship.repository.AppointmentRepository;
@@ -30,6 +32,8 @@ public class PatientServiceImpl implements PatientService {
     public AppointmentEntity makeAppointment(AppointmentCommand newAppointment) {
         UserEntity loggedPatient = userService.getCurrentUser();
         UserEntity doctor = userService.getDoctor(newAppointment.getDoctorId());
+        Boolean alreadyTaken = appointmentRepository.alreadyTaken(doctor.getId(),newAppointment.getAppointmentDate());
+        newAppointment.validate(DoctorProfileMapper.INSTANCE.toDoctorProfileDto(doctor.getDoctorProfile()),alreadyTaken);
         AppointmentEntity appointment = new AppointmentEntity(loggedPatient, doctor, newAppointment.getAppointmentDate(), null);
         return appointmentRepository.save(appointment);
     }
