@@ -1,6 +1,7 @@
 package com.spring.medical_appointment.mapper;
 
 
+import com.spring.medical_appointment.dto.AppointmentDoctorDto;
 import com.spring.medical_appointment.dto.AppointmentDto;
 import com.spring.medical_appointment.models.AppointmentEntity;
 import org.mapstruct.Mapper;
@@ -21,9 +22,19 @@ public interface AppointmentMapper {
     @Mapping(source = "report", target = "report")
     AppointmentDto ToAppointmentDto(AppointmentEntity appointmentEntity);
 
+    AppointmentDoctorDto ToAppointmentDoctorDto(AppointmentEntity appointmentEntity);
+
     default Page<AppointmentDto> ToAppointmentDtoPage(Page<AppointmentEntity> appointmentEntityPage) {
         List<AppointmentDto> appointmentDtoList = appointmentEntityPage.getContent().stream()
                 .map(this::ToAppointmentDto)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(appointmentDtoList, appointmentEntityPage.getPageable(), appointmentEntityPage.getTotalElements());
+    }
+
+    default Page<AppointmentDoctorDto> ToAppointmentDocotorDtoPage(Page<AppointmentEntity> appointmentEntityPage) {
+        List<AppointmentDoctorDto> appointmentDtoList = appointmentEntityPage.getContent().stream()
+                .map(this::ToAppointmentDoctorDto)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(appointmentDtoList, appointmentEntityPage.getPageable(), appointmentEntityPage.getTotalElements());

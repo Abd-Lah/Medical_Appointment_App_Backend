@@ -2,6 +2,7 @@ package com.spring.medical_appointment.service.auth;
 
 import com.spring.medical_appointment.commands.LoginCommand;
 import com.spring.medical_appointment.commands.RegisterCommand;
+import com.spring.medical_appointment.exceptions.ResourceNotFoundException;
 import com.spring.medical_appointment.models.DoctorProfile;
 import com.spring.medical_appointment.models.UserEntity;
 import com.spring.medical_appointment.payload.JwtResponse;
@@ -12,7 +13,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -52,13 +52,23 @@ public class AuthService {
     }
 
     public JwtResponse verify(LoginCommand user) {
-        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-        if (authentication.isAuthenticated()) {
+        try {
+            authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+
             UserEntity loggedUser = userRepository.findByEmail(user.getEmail());
-            token = jwtService.generateToken(user.getEmail());
-            return new JwtResponse(loggedUser.getEmail(),loggedUser.getFirstName(),loggedUser.getLastName(),loggedUser.getPhoneNumber(),token,loggedUser.getRole().toString());
-        } else {
-            throw new RuntimeException("Authentication failed");
+
+            String token = jwtService.generateToken(user.getEmail());
+
+            return new JwtResponse(
+                    loggedUser.getEmail(),
+                    loggedUser.getFirstName(),
+                    loggedUser.getLastName(),
+                    loggedUser.getPhoneNumber(),
+                    token,
+                    loggedUser.getRole().toString()
+            );
+        } catch (Exception ex) {
+            throw new ResourceNotFoundException("Bad credentials");
         }
     }
 }

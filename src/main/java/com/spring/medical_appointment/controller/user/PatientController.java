@@ -5,6 +5,7 @@ import com.spring.medical_appointment.dto.AppointmentDto;
 import com.spring.medical_appointment.mapper.AppointmentMapper;
 import com.spring.medical_appointment.models.AppointmentEntity;
 import com.spring.medical_appointment.service.patient.PatientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +28,10 @@ public class PatientController {
     }
 
     @PostMapping
-    public ResponseEntity<AppointmentDto> makeAppointment(@RequestBody AppointmentCommand appointmentCommand){
+    public ResponseEntity<AppointmentDto> makeAppointment(@Valid @RequestBody AppointmentCommand appointmentCommand){
         AppointmentEntity newAppointment = patientService.makeAppointment(appointmentCommand);
         return new ResponseEntity<>(AppointmentMapper.INSTANCE.ToAppointmentDto(newAppointment), HttpStatus.CREATED);
     }
+
+
 }

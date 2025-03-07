@@ -1,5 +1,6 @@
 package com.spring.medical_appointment.models;
 
+import com.spring.medical_appointment.commands.ReportCommand;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,4 +26,9 @@ public class ReportEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
+    public void update(ReportCommand reportCommand) {
+        diagnosis = reportCommand.getDiagnosis();
+        treatment = reportCommand.getTreatment();
+        notes = reportCommand.getNotes();
+    }
 }

@@ -1,6 +1,7 @@
 package com.spring.medical_appointment.repository;
 
 import com.spring.medical_appointment.models.AppointmentEntity;
+import com.spring.medical_appointment.models.AppointmentStatus;
 import com.spring.medical_appointment.models.UserEntity;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
@@ -20,14 +21,16 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<AppointmentEntity, Long>, JpaSpecificationExecutor<AppointmentEntity> {
 
-    // Custom method using Specification to handle dynamic ordering by appointmentDate
-    default Page<AppointmentEntity> getAppointments(UserEntity loggedPatient, String orderBy, Pageable pageable) {
+    @Query("SELECT a FROM AppointmentEntity a WHERE a.id = :appointmentId AND a.doctor = :userEntity")
+    AppointmentEntity findByAppointmentIdAndByUserId(String appointmentId, UserEntity userEntity);
+
+    default Page<AppointmentEntity> getAppointments(UserEntity logged, String orderBy, Pageable pageable) {
         return findAll((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            Join<AppointmentEntity, UserEntity> patientJoin = root.join("patient", JoinType.INNER);
+            Join<AppointmentEntity, UserEntity> patientJoin = root.join(logged.getRole().toString().toLowerCase(), JoinType.INNER);
 
-            predicates.add(builder.equal(patientJoin.get("id"), loggedPatient.getId()));
+            predicates.add(builder.equal(patientJoin.get("id"), logged.getId()));
 
             if ("asc".equalsIgnoreCase(orderBy)) {
                 query.orderBy(builder.asc(root.get("appointmentDate")));
@@ -42,4 +45,6 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
     @Query("SELECT COUNT(a) > 0 FROM AppointmentEntity a WHERE a.doctor.id = :doctorId AND a.appointmentDate = :appointmentDate")
     Boolean alreadyTaken(@Param("doctorId") String doctorId, @Param("appointmentDate") LocalDateTime appointmentDate);
 
+    @Query("SELECT COUNT(a) > 0 FROM AppointmentEntity a WHERE a.patient.id = :id AND a.Status = :status")
+    Boolean pending(String id, AppointmentStatus status);
 }

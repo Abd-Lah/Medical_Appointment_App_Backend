@@ -2,6 +2,7 @@ package com.spring.medical_appointment.commands;
 
 import com.spring.medical_appointment.dto.DoctorProfileDTO;
 import com.spring.medical_appointment.exceptions.ValidationException;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,10 @@ import java.util.List;
 @NoArgsConstructor
 public class AppointmentCommand {
 
+    @NotNull(message = "Doctor field is required")
     private String doctorId;
+
+    @NotNull(message = "Appointment date is required")
     private LocalDateTime appointmentDate;
 
     /*
@@ -31,7 +35,7 @@ public class AppointmentCommand {
         4/ Validates that the selected day is part of the doctor's working days.
         5/ Ensures the selected time falls within the doctor's available working hours and is not during a break.
     */
-    public void validate(DoctorProfileDTO doctorProfileDTO ,Boolean alreadyTaken) throws ValidationException {
+    public void validate(DoctorProfileDTO doctorProfileDTO , Boolean alreadyTaken, Boolean hasPendingAppointmemnt) throws ValidationException {
 
         LocalDateTime now = LocalDateTime.now().plusMinutes(30);
 
@@ -43,6 +47,9 @@ public class AppointmentCommand {
         LocalTime breakStartTime = LocalTime.parse(doctorProfileDTO.getBreakTimeStart());
         LocalTime breakEndTime = LocalTime.parse(doctorProfileDTO.getBreakTimeEnd());
 
+        if(hasPendingAppointmemnt){
+            throw new ValidationException("You have already pending appointment.");
+        }
         if(alreadyTaken) {
             throw new ValidationException("Appointment already taken.");
         }

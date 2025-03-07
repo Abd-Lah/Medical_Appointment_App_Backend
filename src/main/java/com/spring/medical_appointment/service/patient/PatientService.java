@@ -4,6 +4,7 @@ import com.spring.medical_appointment.commands.AppointmentCommand;
 import com.spring.medical_appointment.models.AppointmentEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.BindingResult;
 
 public interface PatientService {
     Page<AppointmentEntity> getMyAppointment(Pageable pageable, String orderBy);
