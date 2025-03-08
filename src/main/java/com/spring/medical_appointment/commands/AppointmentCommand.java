@@ -1,7 +1,13 @@
 package com.spring.medical_appointment.commands;
 
 import com.spring.medical_appointment.dto.DoctorProfileDTO;
+import com.spring.medical_appointment.exceptions.ForbiddenException;
+import com.spring.medical_appointment.exceptions.InvalidRequestException;
+import com.spring.medical_appointment.exceptions.ResourceNotFoundException;
 import com.spring.medical_appointment.exceptions.ValidationException;
+import com.spring.medical_appointment.models.AppointmentEntity;
+import com.spring.medical_appointment.models.AppointmentStatus;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +27,10 @@ import java.util.List;
 @NoArgsConstructor
 public class AppointmentCommand {
 
+    @NotNull(message = "Doctor field is required")
     private String doctorId;
+
+    @NotNull(message = "Appointment date is required")
     private LocalDateTime appointmentDate;
 
     /*
@@ -31,7 +40,7 @@ public class AppointmentCommand {
         4/ Validates that the selected day is part of the doctor's working days.
         5/ Ensures the selected time falls within the doctor's available working hours and is not during a break.
     */
-    public void validate(DoctorProfileDTO doctorProfileDTO ,Boolean alreadyTaken) throws ValidationException {
+    public void validate(DoctorProfileDTO doctorProfileDTO , Boolean alreadyTaken, Boolean hasPendingAppointmemnt, Boolean canceled) throws ValidationException {
 
         LocalDateTime now = LocalDateTime.now().plusMinutes(30);
 
@@ -42,7 +51,15 @@ public class AppointmentCommand {
         int appointmentDuration = doctorProfileDTO.getAppointmentDuration();
         LocalTime breakStartTime = LocalTime.parse(doctorProfileDTO.getBreakTimeStart());
         LocalTime breakEndTime = LocalTime.parse(doctorProfileDTO.getBreakTimeEnd());
-
+        if(canceled){
+            throw new ForbiddenException("Too many canceled appointments.");
+        }
+        if(appointmentDate.isAfter(now.plusDays(15))){
+            throw new ForbiddenException("Choose date in range of 15 days. Try later !");
+        }
+        if(hasPendingAppointmemnt){
+            throw new ValidationException("You have already pending appointment.");
+        }
         if(alreadyTaken) {
             throw new ValidationException("Appointment already taken.");
         }
@@ -66,6 +83,31 @@ public class AppointmentCommand {
         }
     }
 
+    public void validateInUpdate(AppointmentEntity existingAppointment, DoctorProfileDTO doctorProfileDto, Boolean alreadyTaken, Boolean hasPendingAppointment) {
+        // check if appointment exist
+        if(existingAppointment == null) {
+            throw new ResourceNotFoundException("No appointment found");
+        }
+        // check if updated before
+        if(!existingAppointment.getCreatedAt().isEqual(existingAppointment.getUpdatedAt())) {
+            throw new InvalidRequestException("You cannot update an appointment more than once");
+        }
+        // only pending and upcoming appointment allows to update
+        if(!existingAppointment.getStatus().equals(AppointmentStatus.PENDING) || existingAppointment.getAppointmentDate().isBefore(LocalDateTime.now())) {
+            throw new InvalidRequestException("Only pending and upcoming appointment allows to update");
+        }
+
+        // Don't allow changes if not before 8 hours
+        if(!existingAppointment.getAppointmentDate().isAfter(LocalDateTime.now().plusHours(8))) {
+            throw new InvalidRequestException("Unfortunately you cannot update this appointment because it still less than 8 hours");
+        }
+        // the appointment date should be changed
+        if(existingAppointment.getAppointmentDate().equals(this.getAppointmentDate())) {
+            throw new InvalidRequestException("Appointment date cannot be the same");
+        }
+        this.validate(doctorProfileDto, alreadyTaken, hasPendingAppointment,false);
+    }
+
     private boolean isWorkingDay(LocalDateTime appointmentDate, String workingDays) {
         DayOfWeek dayOfWeek = appointmentDate.getDayOfWeek();
 
@@ -87,6 +129,8 @@ public class AppointmentCommand {
 
         return availableTimes;
     }
+
+
 }
 
 

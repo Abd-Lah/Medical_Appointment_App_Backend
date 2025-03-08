@@ -26,6 +26,9 @@ public class AppointmentEntity extends BaseEntity {
     @Column(nullable = false, name = "appointment_date")
     private LocalDateTime appointmentDate;
 
+    @Column(nullable = false)
+    private AppointmentStatus Status = AppointmentStatus.PENDING;
+
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private ReportEntity report;
 
