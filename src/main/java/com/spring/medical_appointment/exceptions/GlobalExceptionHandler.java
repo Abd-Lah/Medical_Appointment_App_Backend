@@ -40,6 +40,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
+    // Forbidden
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Map<String, String>> handleForbidden(ForbiddenException ex, WebRequest request) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Validation");
+        response.put("message", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
     // Handle Generic Exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGlobalException(Exception ex, WebRequest request) {

@@ -1,8 +1,8 @@
 package com.spring.medical_appointment.controller.user;
 
+import com.spring.medical_appointment.commands.AppointmentStatusCommand;
 import com.spring.medical_appointment.commands.ReportCommand;
 import com.spring.medical_appointment.dto.AppointmentDoctorDto;
-import com.spring.medical_appointment.dto.AppointmentDto;
 import com.spring.medical_appointment.dto.ReportDto;
 import com.spring.medical_appointment.mapper.AppointmentMapper;
 import com.spring.medical_appointment.mapper.ReportMapper;
@@ -33,9 +33,8 @@ public class DoctorController {
     }
 
     @PatchMapping(path = "/appointment/{appointmentId}")
-    public ResponseEntity<AppointmentDoctorDto> updateAppointmentStatus(@RequestBody String status, @PathVariable String appointmentId) {
-        AppointmentStatus appointmentStatus = AppointmentStatus.APPROVED;
-        AppointmentEntity appointment = doctorService.changeStatus(appointmentStatus, appointmentId);
+    public ResponseEntity<AppointmentDoctorDto> updateAppointmentStatus(@RequestBody AppointmentStatusCommand status, @PathVariable String appointmentId) {
+        AppointmentEntity appointment = doctorService.changeStatus(status.validate(), appointmentId);
         return new ResponseEntity<>(AppointmentMapper.INSTANCE.ToAppointmentDoctorDto(appointment), HttpStatus.OK);
     }
 

@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public interface AppointmentRepository extends JpaRepository<AppointmentEntity, Long>, JpaSpecificationExecutor<AppointmentEntity> {
+public interface AppointmentRepository extends JpaRepository<AppointmentEntity, String>, JpaSpecificationExecutor<AppointmentEntity> {
 
-    @Query("SELECT a FROM AppointmentEntity a WHERE a.id = :appointmentId AND a.doctor = :userEntity")
+    @Query("SELECT a FROM AppointmentEntity a WHERE a.id = :appointmentId AND (a.doctor = :userEntity OR a.patient = :userEntity)")
     AppointmentEntity findByAppointmentIdAndByUserId(String appointmentId, UserEntity userEntity);
 
     default Page<AppointmentEntity> getAppointments(UserEntity logged, String orderBy, Pageable pageable) {
@@ -42,9 +42,17 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
         }, pageable);
     }
 
-    @Query("SELECT COUNT(a) > 0 FROM AppointmentEntity a WHERE a.doctor.id = :doctorId AND a.appointmentDate = :appointmentDate")
-    Boolean alreadyTaken(@Param("doctorId") String doctorId, @Param("appointmentDate") LocalDateTime appointmentDate);
+    @Query("SELECT COUNT(a) > 0 FROM AppointmentEntity a WHERE a.doctor.id = :doctorId AND a.appointmentDate = :appointmentDate AND a.Status = :status")
+    Boolean alreadyTaken(@Param("doctorId") String doctorId, @Param("appointmentDate") LocalDateTime appointmentDate,@Param("status") AppointmentStatus status);
 
     @Query("SELECT COUNT(a) > 0 FROM AppointmentEntity a WHERE a.patient.id = :id AND a.Status = :status")
     Boolean pending(String id, AppointmentStatus status);
+
+    @Query("SELECT COUNT(a) > 4 FROM AppointmentEntity a " +
+            "WHERE a.patient = :patient " +
+            "AND a.Status = :status " +
+            "AND a.appointmentDate >= CURRENT_DATE - 7 day " +
+            "AND a.appointmentDate < CURRENT_DATE + 15 day ")
+    Boolean canceled(UserEntity patient, AppointmentStatus status);
+
 }

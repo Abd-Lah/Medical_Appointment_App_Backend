@@ -41,10 +41,10 @@ public class DoctorServiceImpl implements DoctorService {
         if (appointment == null) {
             throw new ResourceNotFoundException("No appointment found");
         }
-        if(status == AppointmentStatus.APPROVED && appointment.getAppointmentDate().isBefore(LocalDateTime.now())) {
-            appointment.setStatus(status);
-        }else{
-            throw new ValidationException("Cannot change status of appointment to approved");
+        if(appointment.getAppointmentDate().isAfter(LocalDateTime.now())) {
+            if(status == AppointmentStatus.APPROVED) {
+                throw new ValidationException("Cannot change status of appointment");
+            }
         }
         appointment.setStatus(status);
         return appointmentRepository.save(appointment);
