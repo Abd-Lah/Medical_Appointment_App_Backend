@@ -1,15 +1,14 @@
 package com.spring.medical_appointment.service.patient;
 
 import com.spring.medical_appointment.commands.AppointmentCommand;
-import com.spring.medical_appointment.commands.AppointmentStatusCommand;
 import com.spring.medical_appointment.exceptions.InvalidRequestException;
-import com.spring.medical_appointment.exceptions.ResourceNotFoundException;
 import com.spring.medical_appointment.mapper.DoctorProfileMapper;
 import com.spring.medical_appointment.models.AppointmentEntity;
 import com.spring.medical_appointment.models.AppointmentStatus;
 import com.spring.medical_appointment.models.UserEntity;
 import com.spring.medical_appointment.repository.AppointmentRepository;
 import com.spring.medical_appointment.service.user.UserService;
+import com.spring.medical_appointment.util.Helpers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +23,7 @@ public class PatientServiceImpl implements PatientService {
 
     private final UserService userService;
     private final AppointmentRepository appointmentRepository;
+    private final Helpers<AppointmentEntity> helpers;
 
     @Override
     public Page<AppointmentEntity> getMyAppointment(Pageable pageable ,String orderBy) {
@@ -38,7 +38,7 @@ public class PatientServiceImpl implements PatientService {
         UserEntity loggedPatient = userService.getCurrentUser();
         UserEntity doctor = userService.getDoctor(newAppointment.getDoctorId());
         Boolean alreadyTaken = appointmentRepository.alreadyTaken(doctor.getId(),newAppointment.getAppointmentDate(), AppointmentStatus.PENDING);
-        Boolean canceled = appointmentRepository.canceled(loggedPatient, AppointmentStatus.CANCELLED);
+        Boolean canceled = appointmentRepository.canceled(loggedPatient, AppointmentStatus.CANCELLED, AppointmentCommand.APPOINTMENT_BEFORE_DAYS, AppointmentCommand.APPOINTMENT_AFTER_DAYS);
         Boolean hasPendingAppointment = appointmentRepository.pending(loggedPatient.getId(), AppointmentStatus.PENDING);
         newAppointment.validate(DoctorProfileMapper.INSTANCE.toDoctorProfileDto(doctor.getDoctorProfile()),alreadyTaken, hasPendingAppointment, canceled);
         AppointmentEntity appointment = new AppointmentEntity(loggedPatient, doctor, newAppointment.getAppointmentDate(), AppointmentStatus.PENDING, null);
@@ -49,6 +49,7 @@ public class PatientServiceImpl implements PatientService {
     public AppointmentEntity updateAppointment(AppointmentCommand appointment, String appointmentId) {
         UserEntity loggedPatient = userService.getCurrentUser();
         AppointmentEntity existingAppointment = appointmentRepository.findByAppointmentIdAndByUserId(appointmentId,loggedPatient);
+        helpers.isObjectNull(existingAppointment, "No appointment found");
         UserEntity doctor = existingAppointment.getDoctor();
         Boolean alreadyTaken = appointmentRepository.alreadyTaken(doctor.getId(),appointment.getAppointmentDate(), AppointmentStatus.PENDING);
         appointment.validateInUpdate(existingAppointment,DoctorProfileMapper.INSTANCE.toDoctorProfileDto(doctor.getDoctorProfile()),alreadyTaken, false);
@@ -60,7 +61,8 @@ public class PatientServiceImpl implements PatientService {
     public void cancelAppointment(String appointmentId) {
         UserEntity loggedPatient = userService.getCurrentUser();
         AppointmentEntity existingAppointment = appointmentRepository.findByAppointmentIdAndByUserId(appointmentId,loggedPatient);
-        if(!existingAppointment.getAppointmentDate().isAfter(LocalDateTime.now().plusHours(8))) {
+        helpers.isObjectNull(existingAppointment, "No appointment found");
+        if(!existingAppointment.getAppointmentDate().isAfter(LocalDateTime.now().plusHours(AppointmentCommand.APPOINTMENT_BEFORE_HOURS))) {
             throw new InvalidRequestException("You cant canceler this appointment, because it still less than 8 hours");
         }
         existingAppointment.setStatus(AppointmentStatus.CANCELLED);
