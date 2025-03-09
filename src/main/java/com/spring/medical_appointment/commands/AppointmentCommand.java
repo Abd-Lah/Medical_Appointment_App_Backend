@@ -3,7 +3,6 @@ package com.spring.medical_appointment.commands;
 import com.spring.medical_appointment.dto.DoctorProfileDTO;
 import com.spring.medical_appointment.exceptions.ForbiddenException;
 import com.spring.medical_appointment.exceptions.InvalidRequestException;
-import com.spring.medical_appointment.exceptions.ResourceNotFoundException;
 import com.spring.medical_appointment.exceptions.ValidationException;
 import com.spring.medical_appointment.models.AppointmentEntity;
 import com.spring.medical_appointment.models.AppointmentStatus;
@@ -27,6 +26,11 @@ import java.util.List;
 @NoArgsConstructor
 public class AppointmentCommand {
 
+    public static final Integer APPOINTMENT_AFTER_MINUTES = 30;
+    public static final Integer APPOINTMENT_AFTER_DAYS = 15;
+    public static final Integer APPOINTMENT_BEFORE_HOURS = 8;
+    public static final Integer APPOINTMENT_BEFORE_DAYS = 7;
+
     @NotNull(message = "Doctor field is required")
     private String doctorId;
 
@@ -40,9 +44,9 @@ public class AppointmentCommand {
         4/ Validates that the selected day is part of the doctor's working days.
         5/ Ensures the selected time falls within the doctor's available working hours and is not during a break.
     */
-    public void validate(DoctorProfileDTO doctorProfileDTO , Boolean alreadyTaken, Boolean hasPendingAppointmemnt, Boolean canceled) throws ValidationException {
+    public void validate(DoctorProfileDTO doctorProfileDTO , Boolean alreadyTaken, Boolean hasPendingAppointment, Boolean canceled) throws ValidationException {
 
-        LocalDateTime now = LocalDateTime.now().plusMinutes(30);
+        LocalDateTime now = LocalDateTime.now().plusMinutes(APPOINTMENT_AFTER_MINUTES);
 
 
         String workingDays = doctorProfileDTO.getWorkingDays();
@@ -54,10 +58,10 @@ public class AppointmentCommand {
         if(canceled){
             throw new ForbiddenException("Too many canceled appointments.");
         }
-        if(appointmentDate.isAfter(now.plusDays(15))){
+        if(appointmentDate.isAfter(now.plusDays(APPOINTMENT_AFTER_DAYS))){
             throw new ForbiddenException("Choose date in range of 15 days. Try later !");
         }
-        if(hasPendingAppointmemnt){
+        if(hasPendingAppointment){
             throw new ValidationException("You have already pending appointment.");
         }
         if(alreadyTaken) {
@@ -84,10 +88,7 @@ public class AppointmentCommand {
     }
 
     public void validateInUpdate(AppointmentEntity existingAppointment, DoctorProfileDTO doctorProfileDto, Boolean alreadyTaken, Boolean hasPendingAppointment) {
-        // check if appointment exist
-        if(existingAppointment == null) {
-            throw new ResourceNotFoundException("No appointment found");
-        }
+
         // check if updated before
         if(!existingAppointment.getCreatedAt().isEqual(existingAppointment.getUpdatedAt())) {
             throw new InvalidRequestException("You cannot update an appointment more than once");
@@ -98,7 +99,7 @@ public class AppointmentCommand {
         }
 
         // Don't allow changes if not before 8 hours
-        if(!existingAppointment.getAppointmentDate().isAfter(LocalDateTime.now().plusHours(8))) {
+        if(!existingAppointment.getAppointmentDate().isAfter(LocalDateTime.now().plusHours(APPOINTMENT_BEFORE_HOURS))) {
             throw new InvalidRequestException("Unfortunately you cannot update this appointment because it still less than 8 hours");
         }
         // the appointment date should be changed

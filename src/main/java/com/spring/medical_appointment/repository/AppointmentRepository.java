@@ -51,8 +51,8 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
     @Query("SELECT COUNT(a) > 4 FROM AppointmentEntity a " +
             "WHERE a.patient = :patient " +
             "AND a.Status = :status " +
-            "AND a.appointmentDate >= CURRENT_DATE - 7 day " +
-            "AND a.appointmentDate < CURRENT_DATE + 15 day ")
-    Boolean canceled(UserEntity patient, AppointmentStatus status);
+            "AND a.appointmentDate >= CURRENT_DATE - :beforeDays day " +
+            "AND a.appointmentDate < CURRENT_DATE + : afterDays ")
+    Boolean canceled(UserEntity patient, AppointmentStatus status, int beforeDays, int afterDays);
 
 }

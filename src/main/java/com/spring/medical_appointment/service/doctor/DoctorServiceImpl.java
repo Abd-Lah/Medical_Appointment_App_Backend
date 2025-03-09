@@ -11,6 +11,7 @@ import com.spring.medical_appointment.models.UserEntity;
 import com.spring.medical_appointment.repository.AppointmentRepository;
 import com.spring.medical_appointment.repository.ReportRepository;
 import com.spring.medical_appointment.service.user.UserService;
+import com.spring.medical_appointment.util.Helpers;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,8 @@ public class DoctorServiceImpl implements DoctorService {
     private final UserService userService;
     private final AppointmentRepository appointmentRepository;
     private final ReportRepository reportRepository;
+    private final Helpers<ReportEntity> helpersReport;
+    private final Helpers<AppointmentEntity> helpersAppointment;
 
     @Override
     public Page<AppointmentEntity> getMyAppointment(Pageable pageable, String orderBy) {
@@ -38,9 +41,7 @@ public class DoctorServiceImpl implements DoctorService {
     public AppointmentEntity changeStatus(AppointmentStatus status, String appointmentId) {
         UserEntity loggedDoctor = userService.getCurrentUser();
         AppointmentEntity appointment = appointmentRepository.findByAppointmentIdAndByUserId(appointmentId, loggedDoctor);
-        if (appointment == null) {
-            throw new ResourceNotFoundException("No appointment found");
-        }
+        helpersAppointment.isObjectNull(appointment,"No appointment found");
         if(appointment.getAppointmentDate().isAfter(LocalDateTime.now())) {
             if(status == AppointmentStatus.APPROVED) {
                 throw new ValidationException("Cannot change status of appointment");
@@ -55,9 +56,7 @@ public class DoctorServiceImpl implements DoctorService {
     public ReportEntity addReport(ReportCommand reportCommand, String appointmentId) {
         UserEntity loggedDoctor = userService.getCurrentUser();
         AppointmentEntity appointment = appointmentRepository.findByAppointmentIdAndByUserId(appointmentId, loggedDoctor);
-        if (appointment == null) {
-            throw new ResourceNotFoundException("No appointment found");
-        }
+        helpersAppointment.isObjectNull(appointment,"No appointment found");
         ReportEntity report = ReportMapper.INSTANCE.ToReportEntity(reportCommand);
         appointment.setReport(report);
         appointmentRepository.save(appointment);
@@ -68,13 +67,9 @@ public class DoctorServiceImpl implements DoctorService {
     public ReportEntity editReport(ReportCommand reportCommand, String reportId) {
         UserEntity loggedDoctor = userService.getCurrentUser();
         ReportEntity reportEntity = reportRepository.findById(reportId).orElse(null);
-        if (reportEntity == null) {
-            throw new ResourceNotFoundException("Report not found");
-        }
+        helpersReport.isObjectNull(reportEntity,"No report found");
         AppointmentEntity appointment = appointmentRepository.findByAppointmentIdAndByUserId(reportEntity.getAppointment().getId(), loggedDoctor);
-        if (appointment == null) {
-            throw new InvalidRequestException("Unauthorized to edit this report !");
-        }
+        helpersAppointment.isObjectNull(appointment,"No appointment found");
         reportEntity.update(reportCommand);
         reportRepository.save(reportEntity);
         return reportEntity;
