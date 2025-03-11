@@ -52,7 +52,7 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
             "WHERE a.patient = :patient " +
             "AND a.Status = :status " +
             "AND a.appointmentDate >= CURRENT_DATE - :beforeDays day " +
-            "AND a.appointmentDate < CURRENT_DATE + : afterDays ")
+            "AND a.appointmentDate < CURRENT_DATE + :afterDays day")
     Boolean canceled(UserEntity patient, AppointmentStatus status, int beforeDays, int afterDays);
 
 }

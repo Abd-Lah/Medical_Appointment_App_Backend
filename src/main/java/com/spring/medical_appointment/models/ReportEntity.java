@@ -26,6 +26,10 @@ public class ReportEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
+    public ReportEntity(ReportCommand reportCommand, AppointmentEntity appointment) {
+        this(appointment, reportCommand.getDiagnosis(),reportCommand.getTreatment(), reportCommand.getNotes());
+    }
+
     public void update(ReportCommand reportCommand) {
         diagnosis = reportCommand.getDiagnosis();
         treatment = reportCommand.getTreatment();

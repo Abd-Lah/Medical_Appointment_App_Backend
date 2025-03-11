@@ -50,8 +50,8 @@ public class GlobalExceptionHandler {
     }
 
     // Handle Generic Exceptions
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleGlobalException(Exception ex, WebRequest request) {
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, String>> handleGlobalException(RuntimeException ex, WebRequest request) {
         Map<String, String> response = new HashMap<>();
         response.put("error", "Internal server error");
         response.put("message", ex.getMessage());

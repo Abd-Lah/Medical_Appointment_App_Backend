@@ -4,7 +4,7 @@ import com.spring.medical_appointment.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Helpers<T> {
+public class Helper<T> {
 
 
     public void isObjectNull(T t, String message) {

@@ -7,8 +7,9 @@ import com.spring.medical_appointment.models.AppointmentEntity;
 import com.spring.medical_appointment.models.AppointmentStatus;
 import com.spring.medical_appointment.models.UserEntity;
 import com.spring.medical_appointment.repository.AppointmentRepository;
+import com.spring.medical_appointment.service.billing.BillingService;
 import com.spring.medical_appointment.service.user.UserService;
-import com.spring.medical_appointment.util.Helpers;
+import com.spring.medical_appointment.util.Helper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,8 @@ public class PatientServiceImpl implements PatientService {
 
     private final UserService userService;
     private final AppointmentRepository appointmentRepository;
-    private final Helpers<AppointmentEntity> helpers;
+    private final BillingService billingService;
+    private final Helper<AppointmentEntity> helpers;
 
     @Override
     public Page<AppointmentEntity> getMyAppointment(Pageable pageable ,String orderBy) {
@@ -42,6 +44,7 @@ public class PatientServiceImpl implements PatientService {
         Boolean hasPendingAppointment = appointmentRepository.pending(loggedPatient.getId(), AppointmentStatus.PENDING);
         newAppointment.validate(DoctorProfileMapper.INSTANCE.toDoctorProfileDto(doctor.getDoctorProfile()),alreadyTaken, hasPendingAppointment, canceled);
         AppointmentEntity appointment = new AppointmentEntity(loggedPatient, doctor, newAppointment.getAppointmentDate(), AppointmentStatus.PENDING, null);
+        billingService.appointmentBill(appointment, loggedPatient);
         return appointmentRepository.save(appointment);
     }
 
@@ -54,6 +57,7 @@ public class PatientServiceImpl implements PatientService {
         Boolean alreadyTaken = appointmentRepository.alreadyTaken(doctor.getId(),appointment.getAppointmentDate(), AppointmentStatus.PENDING);
         appointment.validateInUpdate(existingAppointment,DoctorProfileMapper.INSTANCE.toDoctorProfileDto(doctor.getDoctorProfile()),alreadyTaken, false);
         existingAppointment.setAppointmentDate(appointment.getAppointmentDate());
+        billingService.appointmentBill(existingAppointment, loggedPatient);
         return appointmentRepository.save(existingAppointment);
     }
 
@@ -67,6 +71,7 @@ public class PatientServiceImpl implements PatientService {
         }
         existingAppointment.setStatus(AppointmentStatus.CANCELLED);
         appointmentRepository.save(existingAppointment);
+        billingService.appointmentBill(existingAppointment, loggedPatient);
     }
 
 }

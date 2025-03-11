@@ -1,8 +1,7 @@
 package com.spring.medical_appointment.service.doctor;
 
 import com.spring.medical_appointment.commands.ReportCommand;
-import com.spring.medical_appointment.exceptions.InvalidRequestException;
-import com.spring.medical_appointment.exceptions.ResourceNotFoundException;
+import com.spring.medical_appointment.dto.ReportDto;
 import com.spring.medical_appointment.mapper.ReportMapper;
 import com.spring.medical_appointment.models.AppointmentEntity;
 import com.spring.medical_appointment.models.AppointmentStatus;
@@ -11,7 +10,7 @@ import com.spring.medical_appointment.models.UserEntity;
 import com.spring.medical_appointment.repository.AppointmentRepository;
 import com.spring.medical_appointment.repository.ReportRepository;
 import com.spring.medical_appointment.service.user.UserService;
-import com.spring.medical_appointment.util.Helpers;
+import com.spring.medical_appointment.util.Helper;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,8 +26,8 @@ public class DoctorServiceImpl implements DoctorService {
     private final UserService userService;
     private final AppointmentRepository appointmentRepository;
     private final ReportRepository reportRepository;
-    private final Helpers<ReportEntity> helpersReport;
-    private final Helpers<AppointmentEntity> helpersAppointment;
+    private final Helper<ReportEntity> helpersReport;
+    private final Helper<AppointmentEntity> helpersAppointment;
 
     @Override
     public Page<AppointmentEntity> getMyAppointment(Pageable pageable, String orderBy) {
@@ -57,10 +56,10 @@ public class DoctorServiceImpl implements DoctorService {
         UserEntity loggedDoctor = userService.getCurrentUser();
         AppointmentEntity appointment = appointmentRepository.findByAppointmentIdAndByUserId(appointmentId, loggedDoctor);
         helpersAppointment.isObjectNull(appointment,"No appointment found");
-        ReportEntity report = ReportMapper.INSTANCE.ToReportEntity(reportCommand);
-        appointment.setReport(report);
-        appointmentRepository.save(appointment);
-        return report;
+        if(appointment.getStatus() == AppointmentStatus.APPROVED) {
+            return reportRepository.save(new ReportEntity(reportCommand, appointment));
+        }
+        throw new ValidationException("The appointment is "+appointment.getStatus().toString().toLowerCase()+". To add report should be approved !");
     }
 
     @Override
@@ -74,4 +73,5 @@ public class DoctorServiceImpl implements DoctorService {
         reportRepository.save(reportEntity);
         return reportEntity;
     }
+
 }
