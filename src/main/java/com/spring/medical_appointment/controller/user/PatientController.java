@@ -5,15 +5,23 @@ import com.spring.medical_appointment.dto.AppointmentDto;
 import com.spring.medical_appointment.mapper.AppointmentMapper;
 import com.spring.medical_appointment.models.AppointmentEntity;
 import com.spring.medical_appointment.service.patient.PatientService;
+import jakarta.validation.Path;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 @RestController
@@ -27,6 +35,15 @@ public class PatientController {
     public ResponseEntity<Page<AppointmentDto>> getMyAppointment(Pageable pageable,@RequestParam(name="order", defaultValue = "desc") String orderBy) {
         Page<AppointmentEntity> myAppointment = patientService.getMyAppointment(pageable ,orderBy);
         return new ResponseEntity<>(AppointmentMapper.INSTANCE.ToAppointmentDtoPage(myAppointment), HttpStatus.OK);
+    }
+
+    @GetMapping("/billing_url/{filename}")
+    public ResponseEntity<Resource> appointmentBill(@PathVariable String filename) {
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)  // Set content type as PDF
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" +"Appointment"+ "\"")  // Display inline
+                .body(patientService.getMyAppointmentBill(filename));
     }
 
     @PostMapping

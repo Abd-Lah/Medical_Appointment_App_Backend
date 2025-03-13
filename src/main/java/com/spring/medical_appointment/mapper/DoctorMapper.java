@@ -18,7 +18,6 @@ public interface DoctorMapper extends UserMapper {
     @Override
     @Mapping(target = "doctorProfileDTO", source = "doctorProfile")
     DoctorDto toDto(UserEntity userEntity);
-    UserEntity toUserEntity(DoctorDto userDto);
     // Add this method to map Page<UserEntity> to Page<UserDto>
     @Override
     @Mapping(target = "doctorProfileDTO", source = "doctorProfile")

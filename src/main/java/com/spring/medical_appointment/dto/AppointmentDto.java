@@ -20,6 +20,8 @@ public class AppointmentDto {
 
     private LocalDateTime appointmentDate;
 
+    private String billUrl;
+
     private AppointmentStatus status;
 
     private ReportDto report;

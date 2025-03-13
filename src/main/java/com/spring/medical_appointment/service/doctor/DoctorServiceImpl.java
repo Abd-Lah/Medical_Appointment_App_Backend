@@ -9,6 +9,7 @@ import com.spring.medical_appointment.models.ReportEntity;
 import com.spring.medical_appointment.models.UserEntity;
 import com.spring.medical_appointment.repository.AppointmentRepository;
 import com.spring.medical_appointment.repository.ReportRepository;
+import com.spring.medical_appointment.service.billing.BillingService;
 import com.spring.medical_appointment.service.user.UserService;
 import com.spring.medical_appointment.util.Helper;
 import jakarta.validation.ValidationException;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 public class DoctorServiceImpl implements DoctorService {
     private final UserService userService;
     private final AppointmentRepository appointmentRepository;
+    private final BillingService billingService;
     private final ReportRepository reportRepository;
     private final Helper<ReportEntity> helpersReport;
     private final Helper<AppointmentEntity> helpersAppointment;
@@ -47,6 +49,7 @@ public class DoctorServiceImpl implements DoctorService {
             }
         }
         appointment.setStatus(status);
+        billingService.appointmentBill(appointment, appointment.getPatient());
         return appointmentRepository.save(appointment);
     }
 

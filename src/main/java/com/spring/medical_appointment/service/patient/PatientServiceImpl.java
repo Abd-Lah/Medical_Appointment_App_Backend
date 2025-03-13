@@ -11,6 +11,7 @@ import com.spring.medical_appointment.service.billing.BillingService;
 import com.spring.medical_appointment.service.user.UserService;
 import com.spring.medical_appointment.util.Helper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -72,6 +73,17 @@ public class PatientServiceImpl implements PatientService {
         existingAppointment.setStatus(AppointmentStatus.CANCELLED);
         appointmentRepository.save(existingAppointment);
         billingService.appointmentBill(existingAppointment, loggedPatient);
+    }
+
+    @Override
+    public Resource getMyAppointmentBill(String appointmentId) {
+        UserEntity loggedPatient = userService.getCurrentUser();
+        AppointmentEntity existingAppointment = appointmentRepository.findByAppointmentIdAndByUserId(appointmentId,loggedPatient);
+        helpers.isObjectNull(existingAppointment, "No appointment found");
+        if(existingAppointment.getAppointmentDate().isBefore(LocalDateTime.now()) || existingAppointment.getStatus() == AppointmentStatus.CANCELLED) {
+            throw new InvalidRequestException("Billing appointment file no longer exists");
+        }
+        return billingService.GetMyAppointmentBill(appointmentId+".pdf");
     }
 
 }

@@ -1,9 +1,12 @@
 package com.spring.medical_appointment.models;
 
+import com.spring.medical_appointment.config.AppConfig;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 
 import java.time.LocalDateTime;
@@ -11,7 +14,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "appointments")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class AppointmentEntity extends BaseEntity {
 
@@ -33,4 +35,12 @@ public class AppointmentEntity extends BaseEntity {
     private ReportEntity report;
 
 
+    public AppointmentEntity(UserEntity loggedPatient, UserEntity doctor, LocalDateTime appointmentDate, AppointmentStatus appointmentStatus, ReportEntity report) {
+        this.patient = loggedPatient;
+        this.doctor = doctor;
+        this.appointmentDate = appointmentDate;
+        this.Status = appointmentStatus;
+        this.report = report;
+    }
 }
+
