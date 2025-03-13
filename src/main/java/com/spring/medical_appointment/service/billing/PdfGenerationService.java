@@ -45,9 +45,9 @@ public class PdfGenerationService {
             convertToPdf(bill, htmlContent);
 
             //Send Notification
-            if(userService.getCurrentUser().getRole() == Role.PATIENT){
+            //if(userService.getCurrentUser().getRole() == Role.PATIENT){
                 emailService.sendEmail(patient.getEmail(), "Your Appointment", htmlContent);
-            }
+            //}
         }
         return CompletableFuture.completedFuture(null);  // Indicate completion
     }
