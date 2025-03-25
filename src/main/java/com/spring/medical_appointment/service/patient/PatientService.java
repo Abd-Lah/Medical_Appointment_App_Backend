@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PatientService {
+    
     Page<AppointmentEntity> getMyAppointment(Pageable pageable, String orderBy);
 
     AppointmentEntity makeAppointment(AppointmentCommand appointment);
