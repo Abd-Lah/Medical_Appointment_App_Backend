@@ -46,6 +46,15 @@ class ProfilePage {
         document.getElementById('changePasswordForm').addEventListener('submit', (e) => this.handlePasswordChange(e));
         document.getElementById('deleteAccountForm').addEventListener('submit', (e) => this.handleAccountDeletion(e));
         
+        // Modal close events for proper focus management
+        document.getElementById('changePasswordModal').addEventListener('hidden.bs.modal', () => {
+            document.getElementById('changePasswordBtn').focus();
+        });
+        
+        document.getElementById('deleteAccountModal').addEventListener('hidden.bs.modal', () => {
+            document.getElementById('deleteAccountBtn').focus();
+        });
+        
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
@@ -292,6 +301,11 @@ class ProfilePage {
         
         // Clear form
         document.getElementById('changePasswordForm').reset();
+        
+        // Focus on first input after modal is shown
+        setTimeout(() => {
+            document.getElementById('currentPassword').focus();
+        }, 150);
     }
 
     async handlePasswordChange(e) {
@@ -329,14 +343,18 @@ class ProfilePage {
                 newPassword: newPassword
             };
             
-            // Note: This endpoint doesn't exist yet in the backend
             await api.put('/api/user/change-password', formData);
             
             notificationService.success('Password changed successfully!');
             
-            // Close modal
+            // Close modal and return focus to trigger button
             const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
             modal.hide();
+            
+            // Return focus to the change password button
+            setTimeout(() => {
+                document.getElementById('changePasswordBtn').focus();
+            }, 150);
             
         } catch (error) {
             console.error('Failed to change password:', error);
@@ -354,6 +372,11 @@ class ProfilePage {
         
         // Clear form
         document.getElementById('deleteAccountForm').reset();
+        
+        // Focus on first input after modal is shown
+        setTimeout(() => {
+            document.getElementById('deleteConfirmPassword').focus();
+        }, 150);
     }
 
     async handleAccountDeletion(e) {
@@ -384,7 +407,6 @@ class ProfilePage {
                 password: password
             };
             
-            // Note: This endpoint doesn't exist yet in the backend
             await api.delete('/api/user', { data: formData });
             
             notificationService.success('Account deleted successfully!');
@@ -397,6 +419,11 @@ class ProfilePage {
         } catch (error) {
             console.error('Failed to delete account:', error);
             notificationService.error(api.getErrorMessage(error) || 'Failed to delete account');
+            
+            // Return focus to the delete account button on error
+            setTimeout(() => {
+                document.getElementById('deleteAccountBtn').focus();
+            }, 150);
         } finally {
             confirmBtn.disabled = false;
             confirmBtn.innerHTML = originalText;
