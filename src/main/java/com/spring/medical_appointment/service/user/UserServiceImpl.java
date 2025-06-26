@@ -1,23 +1,26 @@
 package com.spring.medical_appointment.service.user;
 
+import com.spring.medical_appointment.commands.ChangePasswordCommand;
+import com.spring.medical_appointment.commands.DeleteAccountCommand;
 import com.spring.medical_appointment.commands.DoctorProfileCommand;
 import com.spring.medical_appointment.commands.UserCommand;
+import com.spring.medical_appointment.exceptions.ForbiddenException;
 import com.spring.medical_appointment.exceptions.ResourceNotFoundException;
+import com.spring.medical_appointment.models.AppointmentEntity;
 import com.spring.medical_appointment.models.DoctorProfile;
 import com.spring.medical_appointment.models.Role;
 import com.spring.medical_appointment.models.UserEntity;
+import com.spring.medical_appointment.repository.AppointmentRepository;
 import com.spring.medical_appointment.repository.DoctorProfileRepository;
 import com.spring.medical_appointment.repository.UserRepository;
-import com.spring.medical_appointment.repository.AppointmentRepository;
-import com.spring.medical_appointment.models.AppointmentStatus;
-import com.spring.medical_appointment.models.AppointmentEntity;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -33,7 +36,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final DoctorProfileRepository doctorProfileRepository;
     private final AppointmentRepository appointmentRepository;
-
+    private final BCryptPasswordEncoder passwordEncoder;
 
     private UserEntity getProfile(String email) {
         UserEntity user = userRepository.findByEmail(email);
@@ -177,5 +180,58 @@ public class UserServiceImpl implements UserService {
         }
         
         return availableTimes;
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(ChangePasswordCommand command) {
+        UserEntity currentUser = getCurrentUser();
+        
+        // Verify current password
+        if (!passwordEncoder.matches(command.getCurrentPassword(), currentUser.getPassword())) {
+            throw new ForbiddenException("Current password is incorrect");
+        }
+        
+        // Validate new password
+        if (command.getNewPassword() == null || command.getNewPassword().length() < 6) {
+            throw new ForbiddenException("New password must be at least 6 characters long");
+        }
+        
+        // Hash and update new password
+        String hashedNewPassword = passwordEncoder.encode(command.getNewPassword());
+        currentUser.setPassword(hashedNewPassword);
+        
+        userRepository.save(currentUser);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAccount(DeleteAccountCommand command) {
+        UserEntity currentUser = getCurrentUser();
+        
+        // Verify password
+        if (!passwordEncoder.matches(command.getPassword(), currentUser.getPassword())) {
+            throw new ForbiddenException("Password is incorrect");
+        }
+        
+        // Delete associated appointments
+        List<AppointmentEntity> appointments;
+        if (currentUser.getRole() == Role.PATIENT) {
+            appointments = appointmentRepository.findByPatient(currentUser);
+        } else if (currentUser.getRole() == Role.DOCTOR) {
+            appointments = appointmentRepository.findByDoctor(currentUser);
+        } else {
+            appointments = List.of(); // Admin doesn't have appointments
+        }
+        
+        appointmentRepository.deleteAll(appointments);
+        
+        // Delete doctor profile if exists
+        if (currentUser.getDoctorProfile() != null) {
+            doctorProfileRepository.delete(currentUser.getDoctorProfile());
+        }
+        
+        // Delete user
+        userRepository.delete(currentUser);
     }
 }

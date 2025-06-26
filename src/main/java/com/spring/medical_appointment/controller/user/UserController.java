@@ -1,5 +1,7 @@
 package com.spring.medical_appointment.controller.user;
 
+import com.spring.medical_appointment.commands.ChangePasswordCommand;
+import com.spring.medical_appointment.commands.DeleteAccountCommand;
 import com.spring.medical_appointment.commands.DoctorProfileCommand;
 import com.spring.medical_appointment.commands.UserCommand;
 import com.spring.medical_appointment.dto.DoctorDto;
@@ -119,6 +121,18 @@ public class UserController {
     @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<DoctorDto> updateUser(@RequestBody DoctorProfileCommand doctorProfileCommand) {
         return new ResponseEntity<>(DoctorMapper.INSTANCE.toDto(userService.updateProfile(doctorProfileCommand)),HttpStatus.OK);
+    }
+
+    @PutMapping("/user/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordCommand command) {
+        userService.changePassword(command);
+        return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
+    }
+
+    @DeleteMapping("/user")
+    public ResponseEntity<?> deleteAccount(@RequestBody DeleteAccountCommand command) {
+        userService.deleteAccount(command);
+        return ResponseEntity.ok(Map.of("message", "Account deleted successfully"));
     }
 
 }

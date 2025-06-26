@@ -60,4 +60,10 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
         String doctorId, LocalDateTime start, LocalDateTime end, List<AppointmentStatus> statuses
     );
 
+    // Find all appointments for a patient
+    List<AppointmentEntity> findByPatient(UserEntity patient);
+
+    // Find all appointments for a doctor
+    List<AppointmentEntity> findByDoctor(UserEntity doctor);
+
 }

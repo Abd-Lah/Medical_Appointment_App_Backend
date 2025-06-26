@@ -1,5 +1,7 @@
 package com.spring.medical_appointment.service.user;
 
+import com.spring.medical_appointment.commands.ChangePasswordCommand;
+import com.spring.medical_appointment.commands.DeleteAccountCommand;
 import com.spring.medical_appointment.commands.DoctorProfileCommand;
 import com.spring.medical_appointment.commands.UserCommand;
 import com.spring.medical_appointment.models.UserEntity;
@@ -20,4 +22,8 @@ public interface UserService {
     UserEntity getDoctor(String id);
     
     List<String> getAvailableSlots(String doctorId, String date);
+    
+    // New methods for password change and account deletion
+    void changePassword(ChangePasswordCommand command);
+    void deleteAccount(DeleteAccountCommand command);
 }
