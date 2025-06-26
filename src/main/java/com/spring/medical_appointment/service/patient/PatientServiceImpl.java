@@ -41,7 +41,12 @@ public class PatientServiceImpl implements PatientService {
         UserEntity loggedPatient = userService.getCurrentUser();
         UserEntity doctor = userService.getDoctor(newAppointment.getDoctorId());
         Boolean alreadyTaken = appointmentRepository.alreadyTaken(doctor.getId(),newAppointment.getAppointmentDate(), AppointmentStatus.PENDING);
-        Boolean canceled = appointmentRepository.canceled(loggedPatient, AppointmentStatus.CANCELLED, AppointmentCommand.APPOINTMENT_BEFORE_DAYS, AppointmentCommand.APPOINTMENT_AFTER_DAYS);
+        
+        // Calculate date range for canceled appointments check (last 7 days to next 15 days)
+        LocalDateTime startDate = LocalDateTime.now().minusDays(AppointmentCommand.APPOINTMENT_BEFORE_DAYS);
+        LocalDateTime endDate = LocalDateTime.now().plusDays(AppointmentCommand.APPOINTMENT_AFTER_DAYS);
+        Boolean canceled = appointmentRepository.canceled(loggedPatient, AppointmentStatus.CANCELLED, startDate, endDate);
+        
         Boolean hasPendingAppointment = appointmentRepository.pending(loggedPatient.getId(), AppointmentStatus.PENDING);
         newAppointment.validate(DoctorProfileMapper.INSTANCE.toDoctorProfileDto(doctor.getDoctorProfile()),alreadyTaken, hasPendingAppointment, canceled);
         AppointmentEntity appointment = new AppointmentEntity(loggedPatient, doctor, newAppointment.getAppointmentDate(), AppointmentStatus.PENDING, null);
@@ -80,10 +85,28 @@ public class PatientServiceImpl implements PatientService {
         UserEntity loggedPatient = userService.getCurrentUser();
         AppointmentEntity existingAppointment = appointmentRepository.findByAppointmentIdAndByUserId(appointmentId,loggedPatient);
         helpers.isObjectNull(existingAppointment, "No appointment found");
-        if(existingAppointment.getAppointmentDate().isBefore(LocalDateTime.now()) || existingAppointment.getStatus() == AppointmentStatus.CANCELLED) {
-            throw new InvalidRequestException("Billing appointment file no longer exists");
+        
+        // Allow bills for PENDING and APPROVED appointments
+        // Only block for CANCELLED appointments or past appointments
+        if(existingAppointment.getStatus() == AppointmentStatus.CANCELLED) {
+            throw new InvalidRequestException("Cannot access bill for cancelled appointment");
         }
+        
+        if(existingAppointment.getAppointmentDate().isBefore(LocalDateTime.now())) {
+            throw new InvalidRequestException("Cannot access bill for past appointment");
+        }
+        
         return billingService.GetMyAppointmentBill(appointmentId+".pdf");
+    }
+
+    @Override
+    public void regenerateBill(String appointmentId) {
+        UserEntity loggedPatient = userService.getCurrentUser();
+        AppointmentEntity existingAppointment = appointmentRepository.findByAppointmentIdAndByUserId(appointmentId, loggedPatient);
+        helpers.isObjectNull(existingAppointment, "No appointment found");
+        
+        // Regenerate the bill
+        billingService.appointmentBill(existingAppointment, loggedPatient);
     }
 
 }

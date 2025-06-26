@@ -20,7 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/doctor")
+@RequestMapping("/api/doctor")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('DOCTOR')")
 public class DoctorController {

@@ -17,4 +17,6 @@ public interface PatientService {
     void cancelAppointment(String appointmentId);
 
     Resource getMyAppointmentBill(String appointmentId);
+    
+    void regenerateBill(String appointmentId);
 }

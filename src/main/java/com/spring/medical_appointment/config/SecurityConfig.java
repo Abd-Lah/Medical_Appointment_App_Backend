@@ -30,6 +30,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(withDefaults())
                 .httpBasic(withDefaults())
                 .csrf((csrf) -> csrf
                         .ignoringRequestMatchers("/**")
@@ -38,8 +39,11 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/register",
                                 "/api/auth/login",
+                                "/api/files/profile-pictures/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui/index.html"
+                                "/swagger-ui/index.html",
+                                "/api/health",
+                                "/api/ping"
                         )
                         .permitAll()
                         .anyRequest()

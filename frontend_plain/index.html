@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Appointment System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/main.css" rel="stylesheet">
+    <style>
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-container">
+        <div class="text-center">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Checking authentication...</div>
+        </div>
+    </div>
+
+    <!-- Main Content (hidden until auth check) -->
+    <div id="mainContent" style="display: none;">
+        <!-- Content will be loaded here -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- Core Services -->
+    <script src="assets/js/core/api.js"></script>
+    <script src="assets/js/core/auth.js"></script>
+    <script src="assets/js/core/notifications.js"></script>
+    <script src="assets/js/utils/helpers.js"></script>
+
+    <script>
+        /**
+         * Main Application Entry Point
+         * Handles authentication check and routing
+         */
+        class App {
+            constructor() {
+                this.init();
+            }
+
+            async init() {
+                console.log('App initializing...');
+                
+                try {
+                    // First check if server is online
+                    const isServerOnline = await this.checkServerStatus();
+                    
+                    if (!isServerOnline) {
+                        console.log('Server is offline, redirecting to maintenance page');
+                        this.redirectToMaintenance();
+                        return;
+                    }
+                    
+                    // Server is online, proceed with authentication check
+                    const hasAuthData = authService.hasValidAuthData();
+                    
+                    if (hasAuthData) {
+                        console.log('User has valid auth data, redirecting to dashboard');
+                        this.redirectToDashboard();
+                    } else {
+                        console.log('User is not authenticated, redirecting to login');
+                        this.redirectToLogin();
+                    }
+                } catch (error) {
+                    console.error('Initialization failed:', error);
+                    // On error, assume server is down and redirect to maintenance
+                    this.redirectToMaintenance();
+                }
+            }
+
+            /**
+             * Check if server is online
+             * @returns {Promise<boolean>} True if server is online
+             */
+            async checkServerStatus() {
+                try {
+                    // Try to connect to a simple endpoint with short timeout
+                    const response = await axios.get('http://localhost:8080/api/health', {
+                        timeout: 3000 // 3 second timeout
+                    });
+                    return response.status === 200;
+                } catch (error) {
+                    console.log('Server status check failed:', error.message);
+                    return false;
+                }
+            }
+
+            redirectToDashboard() {
+                const user = authService.getUser();
+                if (user) {
+                    authService.redirectByRole(user);
+                } else {
+                    this.redirectToLogin();
+                }
+            }
+
+            redirectToLogin() {
+                window.location.href = './pages/auth/login.html';
+            }
+
+            redirectToMaintenance() {
+                // Store current page for back button functionality
+                sessionStorage.setItem('previousPage', window.location.href);
+                window.location.href = './pages/maintenance.html';
+            }
+        }
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new App();
+        });
+    </script>
+</body>
+</html> 

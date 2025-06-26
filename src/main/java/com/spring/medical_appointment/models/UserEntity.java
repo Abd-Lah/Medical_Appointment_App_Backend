@@ -31,6 +31,9 @@ public class UserEntity extends BaseEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "profile_picture_url")
+    private String profilePictureUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;  // PATIENT, DOCTOR, ADMIN

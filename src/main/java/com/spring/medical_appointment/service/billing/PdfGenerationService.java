@@ -11,11 +11,15 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,34 +33,60 @@ public class PdfGenerationService {
     private final EmailService emailService;
     private final UserService userService;
 
-    private final String pdfStoragePath = "/opt/appointment_medical_app/appointment_bills/";
+    @Value("${app.billing.dir:${user.home}/appointment_bills}")
+    private String pdfStoragePath;
 
     @Async
     public CompletableFuture<Void> generateAndSavePdfAsync(AppointmentEntity appointment, UserEntity patient) throws IOException {
+        System.out.println("=== BILL GENERATION STARTED ===");
+        System.out.println("Appointment ID: " + appointment.getId());
+        System.out.println("Appointment Status: " + appointment.getStatus());
+        System.out.println("Patient: " + patient.getFirstName() + " " + patient.getLastName());
+        
+        try {
+            // Check if the appointment is cancelled. If cancelled, remove the existing file (if it exists)
+            if(!checkIfAppointmentCancelled(appointment)){
+                System.out.println("Appointment not cancelled, generating bill...");
+                // Generate HTML content from FreeMarker template
+               String htmlContent = getHtmlContent(appointment, patient);
+                // Generate the file path
+                File bill = getFile(appointment.getId());
+                System.out.println("Bill file path: " + bill.getAbsolutePath());
 
-        // Check if the appointment is cancelled. If cancelled, remove the existing file (if it exists)
-        if(!checkIfAppointmentCancelled(appointment)){
-            // Generate HTML content from FreeMarker template
-           String htmlContent = getHtmlContent(appointment, patient);
-            // Generate the file path
-            File bill = getFile(appointment.getId());
+                // Convert HTML to PDF using iText
+                convertToPdf(bill, htmlContent);
+                System.out.println("Bill generated successfully!");
 
-            // Convert HTML to PDF using iText
-            convertToPdf(bill, htmlContent);
-
-            //Send Notification
-            //if(userService.getCurrentUser().getRole() == Role.PATIENT){
-                emailService.sendEmail(patient.getEmail(), "Your Appointment", htmlContent);
-            //}
+                //Send Notification
+                //if(userService.getCurrentUser().getRole() == Role.PATIENT){
+                    emailService.sendEmail(patient.getEmail(), "Your Appointment", htmlContent);
+                //}
+            } else {
+                System.out.println("Appointment is cancelled, skipping bill generation");
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR during bill generation: " + e.getMessage());
+            e.printStackTrace();
         }
+        
+        System.out.println("=== BILL GENERATION COMPLETED ===");
         return CompletableFuture.completedFuture(null);  // Indicate completion
     }
 
 
     private boolean checkIfAppointmentCancelled(AppointmentEntity appointment) {
         if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
-            File existingPdf = new File(pdfStoragePath, appointment.getId() + ".pdf");
-            if (existingPdf.exists()) existingPdf.delete();
+            try {
+                Path billingPath = Paths.get(pdfStoragePath);
+                if (!Files.exists(billingPath)) {
+                    Files.createDirectories(billingPath);
+                }
+                File existingPdf = new File(billingPath.toFile(), appointment.getId() + ".pdf");
+                if (existingPdf.exists()) existingPdf.delete();
+            } catch (IOException e) {
+                // Log error but continue
+            }
+            
             if(appointment.getAppointmentDate().isAfter(LocalDateTime.now())){
                 emailService.sendEmail(
                     appointment.getPatient().getEmail(),
@@ -87,8 +117,14 @@ public class PdfGenerationService {
         }
     }
 
-    private File getFile(String appointmentId) {
-        File file = new File(pdfStoragePath, appointmentId + ".pdf");
+    private File getFile(String appointmentId) throws IOException {
+        // Create directory if it doesn't exist
+        Path billingPath = Paths.get(pdfStoragePath);
+        if (!Files.exists(billingPath)) {
+            Files.createDirectories(billingPath);
+        }
+        
+        File file = new File(billingPath.toFile(), appointmentId + ".pdf");
 
         // If the file exists (it was already generated before), delete it before generating a new one
         if (file.exists()) {

@@ -42,17 +42,22 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
         }, pageable);
     }
 
-    @Query("SELECT COUNT(a) > 0 FROM AppointmentEntity a WHERE a.doctor.id = :doctorId AND a.appointmentDate = :appointmentDate AND a.Status = :status")
+    @Query("SELECT COUNT(a) > 0 FROM AppointmentEntity a WHERE a.doctor.id = :doctorId AND a.appointmentDate = :appointmentDate AND a.status = :status")
     Boolean alreadyTaken(@Param("doctorId") String doctorId, @Param("appointmentDate") LocalDateTime appointmentDate,@Param("status") AppointmentStatus status);
 
-    @Query("SELECT COUNT(a) > 0 FROM AppointmentEntity a WHERE a.patient.id = :id AND a.Status = :status")
+    @Query("SELECT COUNT(a) > 0 FROM AppointmentEntity a WHERE a.patient.id = :id AND a.status = :status")
     Boolean pending(String id, AppointmentStatus status);
 
     @Query("SELECT COUNT(a) > 4 FROM AppointmentEntity a " +
             "WHERE a.patient = :patient " +
-            "AND a.Status = :status " +
-            "AND a.appointmentDate >= CURRENT_DATE - :beforeDays day " +
-            "AND a.appointmentDate < CURRENT_DATE + :afterDays day")
-    Boolean canceled(UserEntity patient, AppointmentStatus status, int beforeDays, int afterDays);
+            "AND a.status = :status " +
+            "AND a.appointmentDate >= :startDate " +
+            "AND a.appointmentDate <= :endDate")
+    Boolean canceled(UserEntity patient, AppointmentStatus status, LocalDateTime startDate, LocalDateTime endDate);
+
+    // Find all appointments for a doctor on a given date and with given statuses
+    List<AppointmentEntity> findAllByDoctorIdAndAppointmentDateBetweenAndStatusIn(
+        String doctorId, LocalDateTime start, LocalDateTime end, List<AppointmentStatus> statuses
+    );
 
 }

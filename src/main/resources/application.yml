@@ -21,3 +21,16 @@ spring:
           auth: true
           starttls:
             enable: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 5MB
+      file-size-threshold: 2KB
+      location: ${java.io.tmpdir}
+
+app:
+  upload:
+    dir: ${user.home}/uploads/profile-pictures
+  billing:
+    dir: ${user.home}/appointment_bills

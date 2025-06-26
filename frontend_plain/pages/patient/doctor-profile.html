@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Profile - Medical Appointment System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="../../assets/css/main.css" rel="stylesheet">
+    <link href="../../assets/css/components.css" rel="stylesheet">
+    <link href="../../assets/css/pages.css" rel="stylesheet">
+    <style>
+        body { background: #f8fafc; }
+        .doctor-profile-container {
+            display: flex;
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .profile-cv-section {
+            flex: 0 0 60%;
+            max-width: 60%;
+            background: #eaf6ff;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 24px rgba(79,140,255,0.10);
+            padding: 2.5rem 2.5rem 2.5rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 320px;
+        }
+        .profile-avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 2px 8px rgba(79,140,255,0.10);
+            margin-bottom: 1.5rem;
+            align-self: center;
+        }
+        .profile-cv-section h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2d3a4a;
+            margin-bottom: 0.2rem;
+            text-align: left;
+            width: 100%;
+        }
+        .profile-cv-section .specialty-badge {
+            background: #4f8cff;
+            color: #fff;
+            border-radius: 1rem;
+            padding: 0.25rem 0.9rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 1.2rem;
+            display: inline-block;
+        }
+        .profile-cv-section .profile-meta {
+            color: #4f8cff;
+            font-weight: 500;
+            margin-bottom: 1.2rem;
+            text-align: left;
+            width: 100%;
+        }
+        .profile-cv-section .profile-section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #3a5ca8;
+            margin-top: 1.7rem;
+            margin-bottom: 0.7rem;
+            letter-spacing: 0.5px;
+            text-align: left;
+            width: 100%;
+            border-left: 4px solid #4f8cff;
+            padding-left: 0.7rem;
+        }
+        .profile-cv-section .profile-bio {
+            font-size: 1.08rem;
+            color: #444;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            background: #fff;
+            border-radius: 1rem;
+            padding: 1.1rem 1.3rem;
+            box-shadow: 0 2px 8px rgba(79,140,255,0.07);
+            border-left: none;
+        }
+        .profile-cv-section .cv-list {
+            width: 100%;
+            margin-bottom: 0.7rem;
+            margin-top: 1.2rem;
+        }
+        .profile-cv-section .cv-list-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.7rem;
+            margin-bottom: 1.1rem;
+            background: #fff;
+            border-radius: 0.8rem;
+            padding: 0.7rem 1.1rem;
+            box-shadow: 0 1px 4px rgba(79,140,255,0.06);
+            transition: box-shadow 0.18s;
+        }
+        .profile-cv-section .cv-list-item:hover {
+            box-shadow: 0 4px 16px rgba(79,140,255,0.13);
+        }
+        .profile-cv-section .cv-list-item i {
+            color: #4f8cff;
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+        .profile-cv-section .cv-label {
+            font-weight: 600;
+            color: #2d3a4a;
+            min-width: 110px;
+        }
+        .profile-cv-section .cv-value {
+            color: #555;
+        }
+        .book-section-outer {
+            flex: 0 0 40%;
+            max-width: 40%;
+            background: #f4f8fd;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 24px rgba(79,140,255,0.10);
+            padding: 2.5rem 2rem 2rem 2rem;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .book-section {
+            background: #fff;
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 12px rgba(79,140,255,0.07);
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .book-section h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #4f8cff;
+            margin-bottom: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+        .book-divider {
+            border-top: 1.5px solid #eaf6ff;
+            margin: 1.1rem 0 1.5rem 0;
+        }
+        .week-tabs {
+            margin-top: 0;
+            margin-bottom: 1.2rem;
+        }
+        .nav-tabs .nav-link.active {
+            background: #eaf6ff;
+            border-color: #eaf6ff #eaf6ff #fff;
+            color: #4f8cff;
+            font-weight: 600;
+        }
+        .nav-tabs .nav-link {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: #4f8cff;
+            border-radius: 0.7rem 0.7rem 0 0;
+            margin-right: 0.2rem;
+            transition: background 0.15s, color 0.15s;
+        }
+        .nav-tabs .nav-link:not(.active):hover {
+            background: #f4f8fd;
+            color: #2d3a4a;
+        }
+        .slot-btn {
+            margin: 0.25rem 0.5rem 0.25rem 0;
+            min-width: 90px;
+            font-size: 1.05rem;
+            border-radius: 0.7rem;
+            border: 2px solid #eaf6ff;
+            background: #f4f8fd;
+            color: #4f8cff;
+            font-weight: 500;
+            transition: background 0.15s, color 0.15s, border 0.15s;
+        }
+        .slot-btn.selected, .slot-btn:active {
+            background: #4f8cff;
+            color: #fff;
+            border: 2px solid #4f8cff;
+        }
+        .slot-btn:hover {
+            background: #eaf6ff;
+            color: #2d3a4a;
+        }
+        .no-slots {
+            color: #888;
+            margin: 1rem 0;
+        }
+        @media (max-width: 991.98px) {
+            .doctor-profile-container {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            .profile-cv-section, .book-section-outer {
+                max-width: 100%;
+                min-width: 0;
+            }
+        }
+        .days-tab-row {
+            display: flex;
+            gap: 0.7rem;
+            margin-bottom: 1.2rem;
+            margin-top: 0.7rem;
+            overflow-x: auto;
+            padding-bottom: 0.2rem;
+            background: #f4f8fd;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(79,140,255,0.07);
+            padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+        }
+        .days-tab-btn {
+            border: none;
+            background: #eaf6ff;
+            color: #4f8cff;
+            font-weight: 600;
+            font-size: 1.05rem;
+            border-radius: 2rem;
+            padding: 0.55rem 1.3rem;
+            transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+            box-shadow: 0 1px 4px rgba(79,140,255,0.06);
+            margin-bottom: 0;
+            outline: none;
+            cursor: pointer;
+        }
+        .days-tab-btn.active, .days-tab-btn:active {
+            background: #4f8cff;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(79,140,255,0.13);
+        }
+        .days-tab-btn:hover:not(.active) {
+            background: #d6eaff;
+            color: #2d3a4a;
+        }
+        @media (max-width: 600px) {
+            .days-tab-row {
+                gap: 0.4rem;
+                padding: 0.3rem 0.2rem;
+            }
+            .days-tab-btn {
+                font-size: 0.98rem;
+                padding: 0.45rem 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar (reuse patient navbar) -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-heartbeat me-2"></i>MedApp
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item role-patient"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item dropdown role-patient">
+                        <a class="nav-link dropdown-toggle" href="#" id="appointmentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Appointments
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="appointmentsDropdown">
+                            <li><a class="dropdown-item" href="book-appointment.html">Book Appointment</a></li>
+                            <li><a class="dropdown-item" href="appointments.html">Appointment History</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item role-patient"><a class="nav-link" href="profile.html">Profile</a></li>
+                    <li class="nav-item role-patient"><a class="nav-link" href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container doctor-profile-container">
+        <div class="profile-cv-section">
+            <img id="doctorAvatar" class="profile-avatar" src="/assets/images/default-avatar.png" alt="Doctor Avatar">
+            <span class="specialty-badge" id="doctorSpecialty">Specialty</span>
+            <h2 id="doctorName">Dr. Name</h2>
+            <div class="profile-meta" id="doctorCity"><i class="bi bi-geo-alt me-1"></i>City</div>
+            <div class="profile-section-title">Who am I?</div>
+            <div class="profile-bio" id="doctorBio">Loading bio...</div>
+            <div class="profile-section-title">Professional Details</div>
+            <div class="cv-list">
+                <div class="cv-list-item"><i class="bi bi-award"></i><span class="cv-label">Experience:</span> <span class="cv-value" id="doctorExperience">-</span> years</div>
+                <div class="cv-list-item"><i class="bi bi-mortarboard"></i><span class="cv-label">Qualifications:</span> <span class="cv-value" id="doctorQualifications">-</span></div>
+                <div class="cv-list-item"><i class="bi bi-building"></i><span class="cv-label">Clinic:</span> <span class="cv-value" id="doctorClinic">-</span></div>
+                <div class="cv-list-item"><i class="bi bi-calendar-week"></i><span class="cv-label">Working Days:</span> <span class="cv-value" id="doctorWorkingDays">-</span></div>
+                <div class="cv-list-item"><i class="bi bi-clock-history"></i><span class="cv-label">Duration:</span> <span class="cv-value" id="doctorDuration">-</span> min</div>
+            </div>
+        </div>
+        <div class="book-section-outer">
+            <div class="book-section mt-0">
+                <h4>Book an Appointment</h4>
+                <div class="book-divider"></div>
+                <div class="week-tabs">
+                    <ul class="nav nav-tabs" id="weekTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="thisWeek-tab" data-bs-toggle="tab" data-bs-target="#thisWeek" type="button" role="tab" aria-controls="thisWeek" aria-selected="true">This Week</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="nextWeek-tab" data-bs-toggle="tab" data-bs-target="#nextWeek" type="button" role="tab" aria-controls="nextWeek" aria-selected="false">Next Week</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="weekTabContent">
+                        <div class="tab-pane fade show active" id="thisWeek" role="tabpanel" aria-labelledby="thisWeek-tab">
+                            <div class="days-tab-row" id="daysTabThisWeek"></div>
+                            <div class="tab-content" id="daysTabContentThisWeek"></div>
+                        </div>
+                        <div class="tab-pane fade" id="nextWeek" role="tabpanel" aria-labelledby="nextWeek-tab">
+                            <div class="days-tab-row" id="daysTabNextWeek"></div>
+                            <div class="tab-content" id="daysTabContentNextWeek"></div>
+                        </div>
+                    </div>
+                </div>
+                <form id="bookAppointmentForm" style="display:none;">
+                    <input type="hidden" id="bookDoctorId" name="doctorId">
+                    <input type="hidden" id="bookDate" name="date">
+                    <input type="hidden" id="bookTime" name="time">
+                    <div class="text-end mt-3">
+                        <button type="submit" class="btn btn-primary px-4">Book</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../../assets/js/core/api.js"></script>
+    <script src="../../assets/js/core/auth.js"></script>
+    <script src="../../assets/js/core/notifications.js"></script>
+    <script src="../../assets/js/core/menu.js"></script>
+    <script src="../../assets/js/utils/helpers.js"></script>
+    <script>
+        let availableSlotsByDate = {};
+        let workingDays = [];
+        let doctorProfileDTO = null;
+        async function loadDoctorProfile() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const doctorId = urlParams.get('id');
+            if (!doctorId) return;
+            document.getElementById('bookDoctorId').value = doctorId;
+            try {
+                const response = await api.get(`/api/doctor/${doctorId}`);
+                const doctor = response.data;
+                doctorProfileDTO = doctor.doctorProfileDTO;
+                document.getElementById('doctorAvatar').src = doctor.profilePictureUrl ? doctor.profilePictureUrl : '/assets/images/default-avatar.png';
+                document.getElementById('doctorSpecialty').textContent = doctor.doctorProfileDTO?.specialty || 'General';
+                document.getElementById('doctorName').textContent = `Dr. ${doctor.firstName || ''} ${doctor.lastName || ''}`.trim();
+                document.getElementById('doctorCity').textContent = doctor.city || '-';
+                document.getElementById('doctorBio').textContent = doctor.doctorProfileDTO?.bio || 'No bio available.';
+                document.getElementById('doctorExperience').textContent = doctor.doctorProfileDTO?.experience || '-';
+                document.getElementById('doctorQualifications').textContent = doctor.doctorProfileDTO?.qualifications || '-';
+                document.getElementById('doctorClinic').textContent = doctor.doctorProfileDTO?.clinicAddress || '-';
+                document.getElementById('doctorWorkingDays').textContent = doctor.doctorProfileDTO?.workingDays || '-';
+                document.getElementById('doctorDuration').textContent = doctor.doctorProfileDTO?.appointmentDuration || '-';
+                workingDays = (doctor.doctorProfileDTO?.workingDays || '').split(',').map(d => d.trim().toLowerCase());
+                // Use availableSlotsByDate from backend
+                availableSlotsByDate = doctor.availableSlotsByDate || {};
+                generateWeekTabs(doctorId);
+            } catch (e) {
+                notificationService.error('Failed to load doctor profile');
+            }
+        }
+        function isWorkingDay(date) {
+            const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+            return workingDays.includes(dayName);
+        }
+        function generateWeekTabs(doctorId) {
+            function getWeekDates(startOffset) {
+                const today = new Date();
+                const weekDates = [];
+                for (let i = 0; i < 7; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() + startOffset + i);
+                    weekDates.push(date);
+                }
+                return weekDates;
+            }
+            // This week
+            const thisWeekDates = getWeekDates(0);
+            const daysTabThisWeek = document.getElementById('daysTabThisWeek');
+            const daysTabContentThisWeek = document.getElementById('daysTabContentThisWeek');
+            daysTabThisWeek.innerHTML = '';
+            daysTabContentThisWeek.innerHTML = '';
+            // Only show working days with available slots and not in the past
+            const filteredThisWeekDates = thisWeekDates.filter(date => {
+                const dateStr = date.toISOString().slice(0, 10);
+                return isWorkingDay(date) && availableSlotsByDate[dateStr] && availableSlotsByDate[dateStr].length > 0 && date >= new Date(new Date().toDateString());
+            });
+            filteredThisWeekDates.forEach((date, idx) => {
+                const dateStr = date.toISOString().slice(0, 10);
+                const tabId = `thisWeek-day-${dateStr}`;
+                const active = idx === 0 ? 'active' : '';
+                daysTabThisWeek.innerHTML += `<button class="days-tab-btn ${active}" id="${tabId}-tab" data-tab-id="${tabId}" data-date="${dateStr}">${date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</button>`;
+                daysTabContentThisWeek.innerHTML += `<div class="tab-pane fade ${active ? 'show active' : ''}" id="${tabId}" role="tabpanel" aria-labelledby="${tabId}-tab">
+                    <div class="slots-list" id="slots-list-thisWeek-${dateStr}">Loading...</div>
+                </div>`;
+            });
+            daysTabThisWeek.querySelectorAll('.days-tab-btn').forEach((btn, idx) => {
+                btn.addEventListener('click', function() {
+                    daysTabThisWeek.querySelectorAll('.days-tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    daysTabContentThisWeek.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+                    const tabId = this.getAttribute('data-tab-id');
+                    const pane = daysTabContentThisWeek.querySelector(`#${tabId}`);
+                    if (pane) { pane.classList.add('show', 'active'); }
+                });
+            });
+            filteredThisWeekDates.forEach((date, idx) => {
+                const dateStr = date.toISOString().slice(0, 10);
+                renderSlots(doctorId, dateStr, `thisWeek`);
+            });
+            // Next week
+            const nextWeekDates = getWeekDates(7);
+            const daysTabNextWeek = document.getElementById('daysTabNextWeek');
+            const daysTabContentNextWeek = document.getElementById('daysTabContentNextWeek');
+            daysTabNextWeek.innerHTML = '';
+            daysTabContentNextWeek.innerHTML = '';
+            const filteredNextWeekDates = nextWeekDates.filter(date => {
+                const dateStr = date.toISOString().slice(0, 10);
+                return isWorkingDay(date) && availableSlotsByDate[dateStr] && availableSlotsByDate[dateStr].length > 0;
+            });
+            filteredNextWeekDates.forEach((date, idx) => {
+                const dateStr = date.toISOString().slice(0, 10);
+                const tabId = `nextWeek-day-${dateStr}`;
+                const active = idx === 0 ? 'active' : '';
+                daysTabNextWeek.innerHTML += `<button class="days-tab-btn ${active}" id="${tabId}-tab" data-tab-id="${tabId}" data-date="${dateStr}">${date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</button>`;
+                daysTabContentNextWeek.innerHTML += `<div class="tab-pane fade ${active ? 'show active' : ''}" id="${tabId}" role="tabpanel" aria-labelledby="${tabId}-tab">
+                    <div class="slots-list" id="slots-list-nextWeek-${dateStr}">Loading...</div>
+                </div>`;
+            });
+            daysTabNextWeek.querySelectorAll('.days-tab-btn').forEach((btn, idx) => {
+                btn.addEventListener('click', function() {
+                    daysTabNextWeek.querySelectorAll('.days-tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    daysTabContentNextWeek.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+                    const tabId = this.getAttribute('data-tab-id');
+                    const pane = daysTabContentNextWeek.querySelector(`#${tabId}`);
+                    if (pane) { pane.classList.add('show', 'active'); }
+                });
+            });
+            filteredNextWeekDates.forEach((date, idx) => {
+                const dateStr = date.toISOString().slice(0, 10);
+                renderSlots(doctorId, dateStr, `nextWeek`);
+            });
+        }
+        function renderSlots(doctorId, dateStr, weekType) {
+            const slotsList = document.getElementById(`slots-list-${weekType}-${dateStr}`);
+            const slots = availableSlotsByDate[dateStr] || [];
+            if (!slots.length) {
+                slotsList.innerHTML = '<div class="no-slots">No slots available</div>';
+                return;
+            }
+            slotsList.innerHTML = slots.map(slot => `<button type="button" class="btn btn-outline-primary slot-btn" data-date="${dateStr}" data-time="${slot}">${slot}</button>`).join('');
+            slotsList.querySelectorAll('.slot-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    document.getElementById('bookAppointmentForm').style.display = '';
+                    document.getElementById('bookDate').value = this.getAttribute('data-date');
+                    document.getElementById('bookTime').value = this.getAttribute('data-time');
+                });
+            });
+        }
+        document.addEventListener('DOMContentLoaded', loadDoctorProfile);
+        document.getElementById('bookAppointmentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const doctorId = document.getElementById('bookDoctorId').value;
+            const date = document.getElementById('bookDate').value;
+            const time = document.getElementById('bookTime').value;
+            if (!doctorId || !date || !time) {
+                notificationService.error('Please select a slot.');
+                return;
+            }
+            // Extra frontend validation
+            const now = new Date();
+            const selectedDateTime = new Date(date + 'T' + time);
+            if (selectedDateTime < now) {
+                notificationService.error('Cannot book appointments in the past.');
+                return;
+            }
+            if ((selectedDateTime - now) / (60 * 1000) < 30) {
+                notificationService.error('Appointment must be at least 30 minutes after the current time.');
+                return;
+            }
+            if ((selectedDateTime - now) / (1000 * 60 * 60 * 24) > 15) {
+                notificationService.error('Appointments can only be booked up to 15 days in advance.');
+                return;
+            }
+            try {
+                await api.post('/api/patient/appointment', { doctorId, appointmentDate: date + 'T' + time });
+                notificationService.success('Appointment booked successfully!');
+                this.reset();
+                this.style.display = 'none';
+                document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+                // Refresh slots after booking
+                await loadDoctorProfile();
+                generateWeekTabs(doctorId);
+            } catch (err) {
+                // Show all backend error messages to the user
+                let msg = 'Failed to book appointment.';
+                if (err && (err.status === 400 || err.status === 401 || err.status === 403 || err.status === 404 || err.status === 409 || err.status === 422 || err.status === 500)) {
+                    msg = err.message || (err.data && err.data.message) || msg;
+                }
+                notificationService.error(msg);
+                // If slot taken or validation error, refresh slots
+                await loadDoctorProfile();
+                generateWeekTabs(doctorId);
+            }
+        });
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            authService.logout();
+        });
+    </script>
+</body>
+</html> 

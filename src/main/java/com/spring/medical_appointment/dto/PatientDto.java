@@ -21,4 +21,6 @@ public class PatientDto {
 
     private String phoneNumber;
 
+    private String profilePictureUrl;
+
 }

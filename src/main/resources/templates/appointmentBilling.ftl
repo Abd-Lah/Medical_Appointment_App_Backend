@@ -109,23 +109,23 @@
         <table>
             <tr>
                 <th>Patient</th>
-                <td>${patient.firstName} ${patient.lastName}</td>
+                <td>${patient.firstName!'Unknown'} ${patient.lastName!'Unknown'}</td>
             </tr>
             <tr>
                 <th>Doctor Name</th>
-                <td>${doctor.firstName} ${doctor.lastName}</td>
+                <td>${doctor.firstName!'Unknown'} ${doctor.lastName!'Unknown'}</td>
             </tr>
             <tr>
                 <th>Specialty</th>
-                <td>${doctorProfile.specialty}</td>
+                <td>${doctorProfile.specialty!'General'}</td>
             </tr>
             <tr>
                 <th>Clinic Address</th>
-                <td>${doctorProfile.clinicAddress}</td>
+                <td>${doctorProfile.clinicAddress!'Not specified'}</td>
             </tr>
             <tr>
                 <th>Consultation Duration</th>
-                <td>${doctorProfile.appointmentDuration}</td>
+                <td>${doctorProfile.appointmentDuration!'30'} minutes</td>
             </tr>
 
         </table>

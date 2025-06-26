@@ -29,7 +29,7 @@ public class AppointmentEntity extends BaseEntity {
     private LocalDateTime appointmentDate;
 
     @Column(nullable = false)
-    private AppointmentStatus Status = AppointmentStatus.PENDING;
+    private AppointmentStatus status = AppointmentStatus.PENDING;
 
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private ReportEntity report;
@@ -39,7 +39,7 @@ public class AppointmentEntity extends BaseEntity {
         this.patient = loggedPatient;
         this.doctor = doctor;
         this.appointmentDate = appointmentDate;
-        this.Status = appointmentStatus;
+        this.status = appointmentStatus;
         this.report = report;
     }
 }

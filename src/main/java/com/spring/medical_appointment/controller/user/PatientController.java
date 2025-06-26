@@ -22,31 +22,70 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/patient/appointment")
+@RequestMapping("/api/patient")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('PATIENT')")
 public class PatientController {
     private final PatientService patientService;
 
-    @GetMapping
+    @GetMapping("/appointment")
     public ResponseEntity<Page<AppointmentDto>> getMyAppointment(Pageable pageable,@RequestParam(name="order", defaultValue = "desc") String orderBy) {
         Page<AppointmentEntity> myAppointment = patientService.getMyAppointment(pageable ,orderBy);
         return new ResponseEntity<>(AppointmentMapper.INSTANCE.ToAppointmentDtoPage(myAppointment), HttpStatus.OK);
     }
 
-    @GetMapping("/billing_url/{filename}")
-    public ResponseEntity<Resource> appointmentBill(@PathVariable String filename) {
-
+    @GetMapping("/billing_url/{appointmentId}")
+    public ResponseEntity<Resource> appointmentBill(@PathVariable String appointmentId) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)  // Set content type as PDF
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" +"Appointment"+ "\"")  // Display inline
-                .body(patientService.getMyAppointmentBill(filename));
+                .body(patientService.getMyAppointmentBill(appointmentId));
     }
 
-    @PostMapping
+    @GetMapping("/billing-test")
+    public ResponseEntity<?> billingTest() {
+        try {
+            String billingDir = System.getProperty("user.home") + "/appointment_bills";
+            java.io.File dir = new java.io.File(billingDir);
+            
+            if (!dir.exists()) {
+                return ResponseEntity.ok(Map.of(
+                    "message", "Billing directory does not exist",
+                    "path", billingDir,
+                    "exists", false
+                ));
+            }
+            
+            java.io.File[] files = dir.listFiles();
+            List<String> fileNames = new ArrayList<>();
+            if (files != null) {
+                for (java.io.File file : files) {
+                    fileNames.add(file.getName());
+                }
+            }
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "Billing directory exists",
+                "path", billingDir,
+                "exists", true,
+                "files", fileNames,
+                "fileCount", fileNames.size()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.ok(Map.of(
+                "message", "Error checking billing directory",
+                "error", e.getMessage()
+            ));
+        }
+    }
+
+    @PostMapping("/appointment")
     public ResponseEntity<AppointmentDto> makeAppointment(@Valid @RequestBody AppointmentCommand appointmentCommand){
         AppointmentEntity newAppointment = patientService.makeAppointment(appointmentCommand);
         return new ResponseEntity<>(AppointmentMapper.INSTANCE.ToAppointmentDto(newAppointment), HttpStatus.CREATED);
@@ -66,5 +105,21 @@ public class PatientController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
+    @PostMapping("/regenerate-bill/{appointmentId}")
+    public ResponseEntity<?> regenerateBill(@PathVariable String appointmentId) {
+        try {
+            patientService.regenerateBill(appointmentId);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "Bill regenerated successfully",
+                "appointmentId", appointmentId
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "message", "Failed to regenerate bill",
+                "error", e.getMessage()
+            ));
+        }
+    }
 
 }

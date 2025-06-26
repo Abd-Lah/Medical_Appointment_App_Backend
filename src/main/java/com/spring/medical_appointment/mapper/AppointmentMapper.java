@@ -44,7 +44,7 @@ public interface AppointmentMapper {
 
     default String generateBillingUrl(AppointmentEntity appointmentEntity) {
         String baseUrl = "http://localhost:8080";
-        return baseUrl + "/patient/appointment/billing_url/" + appointmentEntity.getId();
+        return baseUrl + "/api/patient/billing_url/" + appointmentEntity.getId();
     }
 
 }
