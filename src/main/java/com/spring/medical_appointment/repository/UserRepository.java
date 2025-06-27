@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -17,9 +19,12 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String>, JpaSpecificationExecutor<UserEntity> {
-    UserEntity findByEmail(String email);
+    
+    @Query("SELECT u FROM UserEntity u WHERE u.email = :email AND u.deleted = false")
+    UserEntity findByEmail(@Param("email") String email);
 
-    Page<UserEntity> findUsersByRole(Role role, Pageable pageable);
+    @Query("SELECT u FROM UserEntity u WHERE u.role = :role AND u.deleted = false")
+    Page<UserEntity> findUsersByRole(@Param("role") Role role, Pageable pageable);
 
     default Page<UserEntity> getDoctors(String firstName, String lastName, String city, String specialization, Pageable pageable) {
         return findAll((root, query, builder) -> {
@@ -44,9 +49,20 @@ public interface UserRepository extends JpaRepository<UserEntity, String>, JpaSp
             }
 
             predicates.add(builder.equal(root.get("role"), Role.DOCTOR));
+            predicates.add(builder.equal(root.get("deleted"), false));
 
             return builder.and(predicates.toArray(new Predicate[0]));
         }, pageable);
     }
+
+    // Override default findAll to exclude deleted records
+    @Override
+    @Query("SELECT u FROM UserEntity u WHERE u.deleted = false")
+    List<UserEntity> findAll();
+
+    // Override default findById to exclude deleted records
+    @Override
+    @Query("SELECT u FROM UserEntity u WHERE u.id = :id AND u.deleted = false")
+    java.util.Optional<UserEntity> findById(@Param("id") String id);
 
 }

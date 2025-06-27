@@ -690,7 +690,7 @@
                         
                         <div class="form-group">
                             <label for="city">City</label>
-                            <input type="text" class="form-control" id="city" name="city" required>
+                            <div id="citySelectorContainer"></div>
                         </div>
                     </div>
 
@@ -699,10 +699,6 @@
                         <button type="submit" id="saveBtn" class="btn btn-primary">
                             <i class="fas fa-save"></i>
                             Save Changes
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="history.back()">
-                            <i class="fas fa-arrow-left"></i>
-                            Back
                         </button>
                     </div>
                 </form>
@@ -843,6 +839,7 @@
     <script src="../../assets/js/core/auth.js"></script>
     <script src="../../assets/js/core/notifications.js"></script>
     <script src="../../assets/js/utils/helpers.js"></script>
+    <script src="../../assets/js/utils/citySelector.js"></script>
     <!-- Page Script -->
     <script src="../../assets/js/pages/patient/profile.js"></script>
 </body>

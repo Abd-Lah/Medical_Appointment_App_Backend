@@ -4,60 +4,79 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Require authentication with proper path
-    const isAuth = await authService.requireAuth('../../pages/auth/login.html');
-    if (!isAuth) {
-        console.log('Authentication failed, redirecting to login');
+    // Get user info from localStorage or backend
+    let user = null;
+    try {
+        user = authService.getUser();
+        if (!user) {
+            // Try to fetch from backend if not in localStorage
+            const response = await api.get('/api/user');
+            user = response.data;
+        }
+    } catch (e) {
+        // fallback: redirect to login if not authenticated
+        window.location.href = '../../pages/auth/login.html';
         return;
     }
 
-    // Start health monitoring
-    api.startHealthMonitoring(30000); // Check every 30 seconds
+    // Set welcome name (prefer full name, fallback to email)
+    const nameSpan = document.getElementById('dashboardUserName');
+    if (nameSpan && user) {
+        let displayName = user.firstName ? user.firstName : '';
+        if (user.lastName) displayName += ' ' + user.lastName;
+        if (!displayName.trim()) displayName = user.email;
+        nameSpan.textContent = displayName.trim();
+    }
 
-    // Set active link
-    setActiveNavLink();
+    // Load dashboard stats (numbers)
+    loadDashboardStats(user);
 
-    // Load user info
-    const user = authService.getUser();
-    if (user) {
-        document.getElementById('dashboardUserName').textContent = user.name || user.email || 'User';
-        
-        // Call menu function with proper error handling
-        if (window.showMenuForRole && user.role) {
-            console.log('Calling showMenuForRole with role:', user.role);
-            try {
-                showMenuForRole(user.role);
-            } catch (error) {
-                console.error('Error calling showMenuForRole:', error);
+    // Check for upcoming appointments and show/hide empty state
+    try {
+        const res = await api.get('/api/patient/appointment');
+        const appointments = res.data.content || res.data || [];
+        // Only show upcoming (PENDING or APPROVED, and in the future)
+        const now = new Date();
+        const upcoming = appointments.filter(app => {
+            const status = app.status;
+            let dateTime;
+            if (app.appointmentDate) {
+                dateTime = new Date(app.appointmentDate);
+            } else if (app.date && app.time) {
+                dateTime = new Date(app.date + 'T' + app.time);
+            } else {
+                return false;
             }
-        } else {
-            console.warn('showMenuForRole not available or user role missing:', {
-                showMenuForRole: !!window.showMenuForRole,
-                userRole: user.role
-            });
+            return (status === 'PENDING' || status === 'APPROVED') && dateTime > now;
+        });
+        
+        // Show/hide empty state based on whether there are upcoming appointments
+        const emptyState = document.getElementById('dashboardEmptyState');
+        if (emptyState) {
+            if (upcoming.length > 0) {
+                // Hide empty state if there are upcoming appointments
+                emptyState.style.display = 'none';
+            } else {
+                // Show empty state if no upcoming appointments
+                emptyState.style.display = '';
+            }
+        }
+    } catch (e) {
+        // On error, show empty state
+        const emptyState = document.getElementById('dashboardEmptyState');
+        if (emptyState) {
+            emptyState.style.display = '';
         }
     }
 
-    // Load dashboard statistics
-    loadDashboardStats(user);
-
-    // Quick actions
-    document.getElementById('bookAppointmentAction').addEventListener('click', () => {
-        window.location.href = '/pages/patient/book-appointment.html';
-    });
-    document.getElementById('viewAppointmentsAction').addEventListener('click', () => {
-        window.location.href = '/pages/patient/appointments.html';
-    });
-    document.getElementById('viewProfileAction').addEventListener('click', () => {
-        window.location.href = '/pages/patient/profile.html';
-    });
-
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        api.stopHealthMonitoring(); // Stop monitoring before logout
-        authService.logout();
-    });
+    // Optionally, handle logout button
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            authService.logout();
+        });
+    }
 });
 
 /**
@@ -79,29 +98,17 @@ function setActiveNavLink() {
 function loadDashboardStats(user) {
     if (!user) return;
     
-    // Appointments
+    // Total Appointments (all statuses)
     const endpoint = user.role === 'DOCTOR' ? '/api/doctor/appointment' : '/api/patient/appointment';
     api.get(endpoint)
         .then(res => {
             const appointments = res.data.content || res.data;
-            const upcoming = appointments.filter(a => a.status === 'PENDING' || a.status === 'APPROVED').length;
-            document.getElementById('upcomingAppointmentsCount').textContent = upcoming;
+            const total = Array.isArray(appointments) ? appointments.length : 0;
+            document.getElementById('totalAppointmentsCount').textContent = total;
         })
         .catch(err => {
             console.log('Failed to load appointments:', err);
-            document.getElementById('upcomingAppointmentsCount').textContent = '0';
-            // Don't show error notification for dashboard stats
-        });
-    
-    // Doctors - Fixed endpoint from /api/doctor to /api/doctors
-    api.get('/api/doctors')
-        .then(res => {
-            const doctors = res.data.content || res.data;
-            document.getElementById('doctorsCount').textContent = Array.isArray(doctors) ? doctors.length : 0;
-        })
-        .catch(err => {
-            console.log('Failed to load doctors:', err);
-            document.getElementById('doctorsCount').textContent = '0';
+            document.getElementById('totalAppointmentsCount').textContent = '0';
             // Don't show error notification for dashboard stats
         });
     

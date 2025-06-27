@@ -6,10 +6,7 @@ import com.spring.medical_appointment.commands.DoctorProfileCommand;
 import com.spring.medical_appointment.commands.UserCommand;
 import com.spring.medical_appointment.exceptions.ForbiddenException;
 import com.spring.medical_appointment.exceptions.ResourceNotFoundException;
-import com.spring.medical_appointment.models.AppointmentEntity;
-import com.spring.medical_appointment.models.DoctorProfile;
-import com.spring.medical_appointment.models.Role;
-import com.spring.medical_appointment.models.UserEntity;
+import com.spring.medical_appointment.models.*;
 import com.spring.medical_appointment.repository.AppointmentRepository;
 import com.spring.medical_appointment.repository.DoctorProfileRepository;
 import com.spring.medical_appointment.repository.UserRepository;
@@ -19,7 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -36,7 +33,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final DoctorProfileRepository doctorProfileRepository;
     private final AppointmentRepository appointmentRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     private UserEntity getProfile(String email) {
         UserEntity user = userRepository.findByEmail(email);
@@ -214,7 +211,7 @@ public class UserServiceImpl implements UserService {
             throw new ForbiddenException("Password is incorrect");
         }
         
-        // Delete associated appointments
+        // Soft delete associated appointments
         List<AppointmentEntity> appointments;
         if (currentUser.getRole() == Role.PATIENT) {
             appointments = appointmentRepository.findByPatient(currentUser);
@@ -224,14 +221,21 @@ public class UserServiceImpl implements UserService {
             appointments = List.of(); // Admin doesn't have appointments
         }
         
-        appointmentRepository.deleteAll(appointments);
-        
-        // Delete doctor profile if exists
-        if (currentUser.getDoctorProfile() != null) {
-            doctorProfileRepository.delete(currentUser.getDoctorProfile());
+        // Soft delete appointments by setting deleted flag
+        for (AppointmentEntity appointment : appointments) {
+            appointment.setDeleted(true);
+            appointmentRepository.save(appointment);
         }
         
-        // Delete user
-        userRepository.delete(currentUser);
+        // Soft delete doctor profile if exists
+        if (currentUser.getDoctorProfile() != null) {
+            currentUser.getDoctorProfile().setDeleted(true);
+            doctorProfileRepository.save(currentUser.getDoctorProfile());
+        }
+        
+        // Soft delete user by setting deleted flag to true
+        currentUser.setDeleted(true);
+        currentUser.setActive(false);
+        userRepository.save(currentUser);
     }
 }

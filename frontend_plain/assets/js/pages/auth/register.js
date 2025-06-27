@@ -10,16 +10,27 @@ class RegisterPage {
         this.lastNameInput = document.getElementById('lastName');
         this.emailInput = document.getElementById('email');
         this.phoneInput = document.getElementById('phone');
-        this.cityInput = document.getElementById('city');
         this.passwordInput = document.getElementById('password');
         this.confirmPasswordInput = document.getElementById('confirmPassword');
         this.roleInput = document.getElementById('role');
         this.submitBtn = document.getElementById('registerBtn');
+        this.citySelector = null;
         this.init();
     }
 
     init() {
+        this.initializeCitySelector();
         this.setupEventListeners();
+    }
+
+    initializeCitySelector() {
+        // Initialize city selector
+        this.citySelector = new CitySelector('citySelectorContainer', {
+            placeholder: 'Search for a city...',
+            noResultsText: 'No cities found',
+            minSearchLength: 1,
+            maxResults: 10
+        });
     }
 
     setupEventListeners() {
@@ -63,7 +74,7 @@ class RegisterPage {
                 lastName: this.lastNameInput.value.trim(),
                 email: this.emailInput.value.trim(),
                 phoneNumber: this.phoneInput.value.trim(),
-                city: this.cityInput.value.trim(),
+                city: this.citySelector ? this.citySelector.getValue() : '',
                 password: this.passwordInput.value,
                 role: this.roleInput.value
             };
@@ -280,26 +291,30 @@ class RegisterPage {
     }
 
     validateCity() {
-        const city = this.cityInput.value.trim();
-        if (!city) {
-            this.showCityError('City is required');
+        if (!this.citySelector) {
+            this.showCityError('City selector not initialized');
             return false;
         }
+        
+        const cityError = this.citySelector.getValidationError();
+        if (cityError) {
+            this.showCityError(cityError);
+            return false;
+        }
+        
         this.clearCityError();
         return true;
     }
     showCityError(message) {
         this.clearCityError();
-        const errorDiv = document.getElementById('cityError');
-        if (errorDiv) {
-            errorDiv.textContent = message;
-            this.cityInput.classList.add('is-invalid');
+        if (this.citySelector) {
+            this.citySelector.showValidationError(message);
         }
     }
     clearCityError() {
-        const errorDiv = document.getElementById('cityError');
-        if (errorDiv) errorDiv.textContent = '';
-        this.cityInput.classList.remove('is-invalid');
+        if (this.citySelector) {
+            this.citySelector.clearValidation();
+        }
     }
 
     setLoading(loading) {

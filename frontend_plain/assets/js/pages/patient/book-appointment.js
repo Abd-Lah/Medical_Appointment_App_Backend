@@ -11,16 +11,28 @@ class BookAppointmentPage {
         this.hasMore = true;
         this.loading = false;
         this.searchParams = { firstName: '', lastName: '', city: '', specialization: '' };
+        this.citySelector = null;
         this.init();
     }
 
     async init() {
         const isAuth = await authService.requireAuth('../../pages/auth/login.html');
         if (!isAuth) return;
+        this.initializeCitySelector();
         this.setupEventListeners();
         this.loadUserInfo();
         await this.fetchAndRenderDoctors(true);
         this.setupInfiniteScroll();
+    }
+
+    initializeCitySelector() {
+        // Initialize city selector
+        this.citySelector = new CitySelector('citySelectorContainer', {
+            placeholder: 'Search for a city...',
+            noResultsText: 'No cities found',
+            minSearchLength: 1,
+            maxResults: 10
+        });
     }
 
     setupEventListeners() {
@@ -44,10 +56,17 @@ class BookAppointmentPage {
     }
 
     handleSearch() {
+        // Validate city if provided
+        const cityValue = this.citySelector ? this.citySelector.getValue() : '';
+        if (cityValue && this.citySelector && !this.citySelector.isValidCity()) {
+            this.citySelector.showValidationError('Please select a valid city from the list');
+            return;
+        }
+        
         this.searchParams = {
             firstName: document.getElementById('firstName').value.trim(),
             lastName: document.getElementById('lastName').value.trim(),
-            city: document.getElementById('city').value.trim(),
+            city: cityValue,
             specialization: document.getElementById('specialization').value.trim()
         };
         this.currentPage = 0;

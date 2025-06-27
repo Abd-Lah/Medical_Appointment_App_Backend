@@ -8,6 +8,7 @@ class ProfilePage {
         this.user = authService.getUser();
         this.cropper = null;
         this.currentFile = null;
+        this.citySelector = null;
         
         this.init();
     }
@@ -19,7 +20,18 @@ class ProfilePage {
         
         this.setupEventListeners();
         this.setActiveNavLink();
+        this.initializeCitySelector();
         this.loadUserData();
+    }
+
+    initializeCitySelector() {
+        // Initialize city selector
+        this.citySelector = new CitySelector('citySelectorContainer', {
+            placeholder: 'Search for a city...',
+            noResultsText: 'No cities found',
+            minSearchLength: 1,
+            maxResults: 10
+        });
     }
 
     setupEventListeners() {
@@ -84,7 +96,16 @@ class ProfilePage {
         document.getElementById('lastName').value = userData.lastName || '';
         document.getElementById('email').value = userData.email || '';
         document.getElementById('phone').value = userData.phoneNumber || '';
-        document.getElementById('city').value = userData.city || '';
+        
+        // Set city value in the city selector with validation
+        if (this.citySelector && userData.city) {
+            const success = this.citySelector.setValue(userData.city);
+            if (!success) {
+                // If the city from database is not in our list, clear it and show warning
+                console.warn(`City "${userData.city}" from database not found in Morocco cities list`);
+                this.citySelector.clear();
+            }
+        }
     }
 
     updateProfileDisplay(userData) {
@@ -109,11 +130,21 @@ class ProfilePage {
             saveBtn.disabled = true;
             saveBtn.innerHTML = '<span class="spinner"></span>Saving...';
             
+            // Validate city first
+            if (this.citySelector) {
+                const cityError = this.citySelector.getValidationError();
+                if (cityError) {
+                    this.citySelector.showValidationError(cityError);
+                    return;
+                }
+                this.citySelector.clearValidation();
+            }
+            
             const formData = {
                 firstName: document.getElementById('firstName').value.trim(),
                 lastName: document.getElementById('lastName').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
-                city: document.getElementById('city').value.trim()
+                city: this.citySelector ? this.citySelector.getValue() : ''
             };
 
             // Validate required fields
