@@ -99,12 +99,21 @@ class ProfilePage {
         
         // Set city value in the city selector with validation
         if (this.citySelector && userData.city) {
-            const success = this.citySelector.setValue(userData.city);
-            if (!success) {
-                // If the city from database is not in our list, clear it and show warning
-                console.warn(`City "${userData.city}" from database not found in Morocco cities list`);
-                this.citySelector.clear();
-            }
+            // Wait for city selector to be fully initialized
+            const checkReady = () => {
+                if (this.citySelector.isReady) {
+                    const success = this.citySelector.setValue(userData.city);
+                    if (!success) {
+                        // If the city from database is not in our list, clear it and show warning
+                        console.warn(`City "${userData.city}" from database not found in Morocco cities list`);
+                        this.citySelector.clear();
+                    }
+                } else {
+                    // Check again in 50ms
+                    setTimeout(checkReady, 50);
+                }
+            };
+            checkReady();
         }
     }
 

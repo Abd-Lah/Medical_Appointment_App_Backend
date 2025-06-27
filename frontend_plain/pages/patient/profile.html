@@ -11,6 +11,7 @@
     <link href="../../assets/css/components.css" rel="stylesheet">
     <link href="../../assets/css/pages.css" rel="stylesheet">
     <link href="../../assets/css/patient.css" rel="stylesheet">
+    <link href="../../assets/css/dark-theme.css" rel="stylesheet">
 </head>
 <body class="profile-body">
     <!-- Navbar -->
@@ -36,6 +37,11 @@
                     </li>
                     <li class="nav-item role-patient"><a class="nav-link active" href="profile.html">Profile</a></li>
                     <li class="nav-item role-patient"><a class="nav-link" href="#" id="logoutBtn">Logout</a></li>
+                    <li class="nav-item">
+                        <button class="nav-link theme-toggle-btn" id="themeToggleBtn" title="Toggle Dark Mode">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -104,7 +110,7 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="city">City</label>
+                            <label>City</label>
                             <div id="citySelectorContainer"></div>
                         </div>
                     </div>
@@ -253,6 +259,8 @@
     <script src="../../assets/js/core/api.js"></script>
     <script src="../../assets/js/core/auth.js"></script>
     <script src="../../assets/js/core/notifications.js"></script>
+    <script src="../../assets/js/core/menu.js"></script>
+    <script src="../../assets/js/core/theme.js"></script>
     <script src="../../assets/js/utils/helpers.js"></script>
     <script src="../../assets/js/utils/citySelector.js"></script>
     <!-- Page Script -->

@@ -32,16 +32,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Setup event listeners only if elements exist
     if (appointmentViewSelect) {
-        appointmentViewSelect.addEventListener('change', () => {
-            if (appointmentViewSelect.value === 'book') {
-                appointmentHistorySection.style.display = 'none';
-                bookAppointmentSection.style.display = '';
-                renderDoctorsGrid();
-            } else {
-                appointmentHistorySection.style.display = '';
-                bookAppointmentSection.style.display = 'none';
-            }
-        });
+appointmentViewSelect.addEventListener('change', () => {
+    if (appointmentViewSelect.value === 'book') {
+        appointmentHistorySection.style.display = 'none';
+        bookAppointmentSection.style.display = '';
+        renderDoctorsGrid();
+    } else {
+        appointmentHistorySection.style.display = '';
+        bookAppointmentSection.style.display = 'none';
+    }
+});
     }
     if (appointmentHistorySection) appointmentHistorySection.style.display = '';
     if (bookAppointmentSection) bookAppointmentSection.style.display = 'none';
@@ -54,9 +54,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300));
     }
 
-    // Ensure showMenuForRole is available
-    if (typeof showMenuForRole === 'undefined' && typeof window !== 'undefined' && window.showMenuForRole) {
-        var showMenuForRole = window.showMenuForRole;
+// Ensure showMenuForRole is available
+if (typeof showMenuForRole === 'undefined' && typeof window !== 'undefined' && window.showMenuForRole) {
+    var showMenuForRole = window.showMenuForRole;
     }
 
     // Initialize the page
@@ -361,27 +361,27 @@ function createAppointmentCard(app) {
     
     console.log('Action flags:', { canUpdate, canCancel, canDownloadBill, canViewReport }); // Debug log
     
-    return `
-    <div class="appointment-card mb-3">
-        <div class="appointment-header d-flex justify-content-between align-items-center mb-2">
-            <div>
+        return `
+        <div class="appointment-card mb-3">
+            <div class="appointment-header d-flex justify-content-between align-items-center mb-2">
+                <div>
                 <div class="appointment-title"><strong>${doctorName}</strong></div>
-                <div class="appointment-doctor text-muted">${date} ${time}</div>
+                    <div class="appointment-doctor text-muted">${date} ${time}</div>
+                </div>
+                <span class="appointment-status status-${(app.status || '').toLowerCase()}">${status}</span>
             </div>
-            <span class="appointment-status status-${(app.status || '').toLowerCase()}">${status}</span>
-        </div>
-        <div class="appointment-details mb-2">
-            <div class="detail-item"><i class="fas fa-user-md me-1"></i>Doctor: ${doctorName}</div>
-            <div class="detail-item"><i class="fas fa-calendar me-1"></i>Date: ${date}</div>
-            <div class="detail-item"><i class="fas fa-clock me-1"></i>Time: ${time}</div>
+            <div class="appointment-details mb-2">
+                <div class="detail-item"><i class="fas fa-user-md me-1"></i>Doctor: ${doctorName}</div>
+                <div class="detail-item"><i class="fas fa-calendar me-1"></i>Date: ${date}</div>
+                <div class="detail-item"><i class="fas fa-clock me-1"></i>Time: ${time}</div>
             <div class="detail-item"><i class="fas fa-info-circle me-1"></i>Status: ${status}</div>
-        </div>
-        <div class="appointment-actions d-flex gap-2">
+            </div>
+            <div class="appointment-actions d-flex gap-2">
             ${canUpdate ? `<button class="btn btn-warning btn-sm btn-update" data-id="${app.id}"><i class="fas fa-edit me-1"></i>Update</button>` : ''}
             ${canCancel ? `<button class="btn btn-danger btn-sm btn-cancel" data-id="${app.id}"><i class="fas fa-times me-1"></i>Cancel</button>` : ''}
             ${canDownloadBill ? `<button class="btn btn-success btn-sm btn-bill" data-id="${app.id}"><i class="fas fa-file-invoice-dollar me-1"></i>Download Bill</button>` : ''}
             ${canViewReport ? `<button class="btn btn-info btn-sm btn-report" data-id="${app.id}"><i class="fas fa-file-medical-alt me-1"></i>View Report</button>` : ''}
-        </div>
+            </div>
     </div>`;
 }
 
@@ -721,19 +721,19 @@ async function viewReport(appointmentId) {
     } catch (e) {
         notificationService.error('Failed to load report.');
     }
-}
-
-// Cancel appointment
-async function cancelAppointment(id) {
-    if (!confirm('Are you sure you want to cancel this appointment?')) return;
-    try {
-        await api.delete(`/api/patient/${id}`);
-        notificationService.success('Appointment cancelled.');
-        await loadAppointments();
-    } catch (e) {
-        notificationService.error('Failed to cancel appointment.');
     }
-}
+
+    // Cancel appointment
+    async function cancelAppointment(id) {
+        if (!confirm('Are you sure you want to cancel this appointment?')) return;
+        try {
+            await api.delete(`/api/patient/${id}`);
+            notificationService.success('Appointment cancelled.');
+            await loadAppointments();
+        } catch (e) {
+            notificationService.error('Failed to cancel appointment.');
+        }
+    }
 
 // Load appointments
 async function loadAppointments() {
@@ -761,23 +761,23 @@ async function loadDoctors() {
     }
 }
 
-function filterAndRender() {
-    let filtered = appointments;
+    function filterAndRender() {
+        let filtered = appointments;
     const status = filterStatusEl ? filterStatusEl.value : '';
     const date = filterDateEl ? filterDateEl.value : '';
-    if (status) {
-        filtered = filtered.filter(a => a.status === status);
+        if (status) {
+            filtered = filtered.filter(a => a.status === status);
+        }
+        if (date) {
+            filtered = filtered.filter(a => (a.date || a.dateTime || a.appointmentDate || '').startsWith(date));
+        }
+        renderAppointments(filtered);
     }
-    if (date) {
-        filtered = filtered.filter(a => (a.date || a.dateTime || a.appointmentDate || '').startsWith(date));
-    }
-    renderAppointments(filtered);
-}
 
 // Export for testing
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { filterAppointments, fetchAppointments, fetchDoctors, renderAppointments, renderDoctorsGrid, createDoctorCard };
-}
+} 
 
 // Dynamically show menu for role
 document.addEventListener('DOMContentLoaded', function() {

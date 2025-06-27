@@ -7,17 +7,21 @@ class CitySelector {
     constructor(containerId, options = {}) {
         this.containerId = containerId;
         this.container = document.getElementById(containerId);
-        this.cities = [];
-        this.filteredCities = [];
-        this.selectedCity = null;
         this.options = {
             placeholder: 'Search for a city...',
             noResultsText: 'No cities found',
             minSearchLength: 1,
             maxResults: 10,
-            inputId: 'city', // Default ID for the hidden input
             ...options
         };
+        
+        this.cities = [];
+        this.filteredCities = [];
+        this.selectedCity = null;
+        this.searchInput = null;
+        this.valueInput = null;
+        this.dropdown = null;
+        this.isReady = false; // Add ready state
         
         this.init();
     }
@@ -26,6 +30,8 @@ class CitySelector {
         await this.loadCities();
         this.createSelector();
         this.bindEvents();
+        this.isReady = true; // Mark as ready
+        console.log('CitySelector initialized successfully');
     }
 
     async loadCities() {
@@ -205,32 +211,71 @@ class CitySelector {
     }
 
     setValue(cityName) {
-        if (cityName) {
-            // Validate that the city exists in our list
-            const cityExists = this.cities.some(city => city.ville === cityName);
-            if (!cityExists) {
-                console.warn(`City "${cityName}" not found in Morocco cities list`);
-                // Clear the value if it's not valid
-                this.clear();
-                return false;
-            }
-            
-            this.searchInput.value = cityName;
-            this.valueInput.value = cityName;
-            this.selectedCity = this.cities.find(city => city.ville === cityName);
-            return true;
+        if (!cityName) {
+            this.clear();
+            return false;
         }
-        return false;
+
+        // Check if selector is ready
+        if (!this.isReady) {
+            console.warn('CitySelector not ready yet, cannot set value');
+            return false;
+        }
+
+        // Wait for cities to be loaded
+        if (!this.cities || this.cities.length === 0) {
+            console.warn('Cities not loaded yet, cannot set value');
+            return false;
+        }
+
+        // Normalize the city name for comparison (remove extra spaces, normalize characters)
+        const normalizedCityName = cityName.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        
+        // Try exact match first
+        let cityExists = this.cities.some(city => city.ville === cityName);
+        let foundCity = this.cities.find(city => city.ville === cityName);
+        
+        // If exact match fails, try normalized comparison
+        if (!cityExists) {
+            cityExists = this.cities.some(city => {
+                const normalizedCity = city.ville.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                return normalizedCity === normalizedCityName;
+            });
+            if (cityExists) {
+                foundCity = this.cities.find(city => {
+                    const normalizedCity = city.ville.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    return normalizedCity === normalizedCityName;
+                });
+            }
+        }
+        
+        if (!cityExists) {
+            console.warn(`City "${cityName}" not found in Morocco cities list`);
+            console.log('Available cities:', this.cities.slice(0, 10).map(c => c.ville)); // Log first 10 cities for debugging
+            this.clear();
+            return false;
+        }
+        
+        if (this.searchInput) {
+            this.searchInput.value = foundCity.ville; // Use the exact city name from the list
+        }
+        if (this.valueInput) {
+            this.valueInput.value = foundCity.ville; // Use the exact city name from the list
+        }
+        this.selectedCity = foundCity;
+        console.log(`City "${foundCity.ville}" set successfully`);
+        return true;
     }
 
     getValue() {
-        return this.valueInput.value;
+        return this.valueInput ? this.valueInput.value : '';
     }
 
     // Validate if the current value is a valid city from the list
     isValidCity() {
         const currentValue = this.getValue();
         if (!currentValue) return false;
+        if (!this.cities || this.cities.length === 0) return false;
         return this.cities.some(city => city.ville === currentValue);
     }
 
@@ -251,6 +296,11 @@ class CitySelector {
         if (this.searchInput) {
             this.searchInput.classList.remove('is-invalid');
         }
+        // Remove error message
+        const errorElement = this.container.querySelector('.city-error-message');
+        if (errorElement) {
+            errorElement.remove();
+        }
     }
 
     // Show validation error
@@ -269,8 +319,12 @@ class CitySelector {
     }
 
     clear() {
-        this.searchInput.value = '';
-        this.valueInput.value = '';
+        if (this.searchInput) {
+            this.searchInput.value = '';
+        }
+        if (this.valueInput) {
+            this.valueInput.value = '';
+        }
         this.selectedCity = null;
         this.hideDropdown();
         this.clearValidation();

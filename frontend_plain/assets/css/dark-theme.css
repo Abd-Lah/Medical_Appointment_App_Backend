@@ -1,0 +1,904 @@
+/**
+ * Dark Theme CSS
+ * Comprehensive dark mode styles for the medical appointment system
+ */
+
+/* Dark Theme CSS Variables */
+[data-theme="dark"] {
+    /* Colors */
+    --dark-bg-primary: #0f172a;
+    --dark-bg-secondary: #1e293b;
+    --dark-bg-tertiary: #334155;
+    --dark-bg-card: #1e293b;
+    --dark-bg-navbar: rgba(15, 23, 42, 0.95);
+    --dark-bg-modal: #1e293b;
+    --dark-bg-overlay: rgba(0, 0, 0, 0.8);
+    
+    /* Text Colors */
+    --dark-text-primary: #f1f5f9;
+    --dark-text-secondary: #cbd5e1;
+    --dark-text-muted: #94a3b8;
+    --dark-text-inverse: #0f172a;
+    
+    /* Border Colors */
+    --dark-border-primary: #334155;
+    --dark-border-secondary: #475569;
+    --dark-border-focus: #3b82f6;
+    
+    /* Shadow Colors */
+    --dark-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    --dark-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    --dark-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    --dark-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    
+    /* Status Colors */
+    --dark-success: #10b981;
+    --dark-warning: #f59e0b;
+    --dark-danger: #ef4444;
+    --dark-info: #3b82f6;
+    
+    /* Gradient Colors */
+    --dark-gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    --dark-gradient-secondary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    --dark-gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --dark-gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    --dark-gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+/* Dark Theme Base Styles */
+[data-theme="dark"] body {
+    background: var(--dark-bg-primary);
+    color: var(--dark-text-primary);
+}
+
+/* Dark Theme Navbar */
+[data-theme="dark"] .navbar {
+    background: var(--dark-bg-navbar) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--dark-border-primary);
+    box-shadow: var(--dark-shadow-md);
+}
+
+[data-theme="dark"] .navbar-brand {
+    color: var(--dark-text-primary) !important;
+}
+
+[data-theme="dark"] .nav-link {
+    color: var(--dark-text-secondary) !important;
+}
+
+[data-theme="dark"] .nav-link:hover {
+    color: var(--dark-text-primary) !important;
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+[data-theme="dark"] .nav-link.active {
+    color: var(--dark-text-primary) !important;
+    background-color: rgba(59, 130, 246, 0.15);
+}
+
+[data-theme="dark"] .dropdown-menu {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+    box-shadow: var(--dark-shadow-lg);
+}
+
+[data-theme="dark"] .dropdown-item {
+    color: var(--dark-text-secondary);
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+    background: var(--dark-bg-tertiary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .dropdown-item.active {
+    background: var(--dark-gradient-primary);
+    color: var(--dark-text-primary);
+}
+
+/* Dark Theme Cards */
+[data-theme="dark"] .card {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+    box-shadow: var(--dark-shadow-sm);
+}
+
+[data-theme="dark"] .card:hover {
+    box-shadow: var(--dark-shadow-md);
+}
+
+[data-theme="dark"] .card-header {
+    background: var(--dark-gradient-primary);
+    border-bottom: 1px solid var(--dark-border-primary);
+}
+
+/* Dark Theme Forms */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background: var(--dark-bg-secondary);
+    border: 1px solid var(--dark-border-primary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    background: var(--dark-bg-secondary);
+    border-color: var(--dark-border-focus);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .form-label {
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .form-text {
+    color: var(--dark-text-muted);
+}
+
+/* Dark Theme Buttons */
+[data-theme="dark"] .btn-primary {
+    background: var(--dark-gradient-primary);
+    border: none;
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    transform: translateY(-1px);
+    box-shadow: var(--dark-shadow-md);
+}
+
+[data-theme="dark"] .btn-outline-primary {
+    border: 2px solid var(--dark-border-focus);
+    color: var(--dark-border-focus);
+    background: transparent;
+}
+
+[data-theme="dark"] .btn-outline-primary:hover {
+    background: var(--dark-border-focus);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: var(--dark-bg-tertiary);
+    border: 1px solid var(--dark-border-primary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background: var(--dark-bg-secondary);
+    color: var(--dark-text-primary);
+}
+
+/* Dark Theme Modals */
+[data-theme="dark"] .modal-content {
+    background: var(--dark-bg-modal);
+    border: 1px solid var(--dark-border-primary);
+    box-shadow: var(--dark-shadow-xl);
+}
+
+[data-theme="dark"] .modal-header {
+    background: var(--dark-gradient-primary);
+    border-bottom: 1px solid var(--dark-border-primary);
+}
+
+[data-theme="dark"] .modal-title {
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .modal-body {
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .modal-footer {
+    border-top: 1px solid var(--dark-border-primary);
+}
+
+/* Dark Theme Tables */
+[data-theme="dark"] .table {
+    background: var(--dark-bg-card);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .table thead th {
+    background: var(--dark-gradient-primary);
+    color: var(--dark-text-primary);
+    border-color: var(--dark-border-primary);
+}
+
+[data-theme="dark"] .table tbody tr {
+    border-color: var(--dark-border-primary);
+}
+
+[data-theme="dark"] .table tbody tr:hover {
+    background: var(--dark-bg-tertiary);
+}
+
+[data-theme="dark"] .table td {
+    border-color: var(--dark-border-primary);
+}
+
+/* Dark Theme Patient Specific Styles */
+
+/* Dashboard Dark Theme */
+[data-theme="dark"] .dashboard-body {
+    background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
+}
+
+[data-theme="dark"] .dashboard-hero-modern {
+    background: var(--dark-gradient-primary);
+    box-shadow: var(--dark-shadow-lg);
+}
+
+[data-theme="dark"] .dashboard-empty {
+    background: var(--dark-bg-card);
+    box-shadow: var(--dark-shadow-md);
+}
+
+[data-theme="dark"] .dashboard-stats-card {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+}
+
+[data-theme="dark"] .dashboard-stats-card-purple {
+    background: var(--dark-gradient-secondary);
+}
+
+[data-theme="dark"] .dashboard-stats-card-orange {
+    background: var(--dark-gradient-warning);
+}
+
+/* Book Appointment Dark Theme */
+[data-theme="dark"] .search-form-bg {
+    background: var(--dark-bg-secondary);
+    border: 1px solid var(--dark-border-primary);
+}
+
+[data-theme="dark"] .doctor-card {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+}
+
+[data-theme="dark"] .doctor-card:hover {
+    box-shadow: var(--dark-shadow-lg);
+}
+
+[data-theme="dark"] .specialty-badge {
+    background: var(--dark-gradient-primary);
+}
+
+/* Appointments Dark Theme */
+[data-theme="dark"] .appointment-card {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+    box-shadow: var(--dark-shadow-sm);
+}
+
+[data-theme="dark"] .appointment-status {
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .status-pending {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--dark-warning);
+}
+
+[data-theme="dark"] .status-approved {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--dark-success);
+}
+
+[data-theme="dark"] .status-cancelled {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--dark-danger);
+}
+
+[data-theme="dark"] .status-completed {
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--dark-info);
+}
+
+/* Profile Dark Theme */
+[data-theme="dark"] .profile-body {
+    background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
+}
+
+[data-theme="dark"] .profile-navbar {
+    background: var(--dark-bg-navbar) !important;
+    border-bottom: 1px solid var(--dark-border-primary);
+}
+
+[data-theme="dark"] .profile-container {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+    box-shadow: var(--dark-shadow-lg);
+}
+
+[data-theme="dark"] .setting-item {
+    background: var(--dark-bg-secondary);
+    border: 1px solid var(--dark-border-primary);
+}
+
+[data-theme="dark"] .setting-item:hover {
+    background: var(--dark-bg-tertiary);
+    border-color: var(--dark-border-secondary);
+}
+
+[data-theme="dark"] .setting-info h4 {
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .setting-info p {
+    color: var(--dark-text-secondary);
+}
+
+/* Doctor Profile Dark Theme */
+[data-theme="dark"] .doctor-profile-body {
+    background: var(--dark-bg-primary);
+}
+
+[data-theme="dark"] .profile-cv-section {
+    background: var(--dark-bg-secondary);
+    box-shadow: var(--dark-shadow-md);
+}
+
+[data-theme="dark"] .profile-cv-section h2 {
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .profile-cv-section .profile-meta {
+    color: var(--dark-text-secondary);
+}
+
+[data-theme="dark"] .profile-cv-section .profile-section-title {
+    color: var(--dark-text-primary);
+    border-left-color: var(--dark-border-focus);
+}
+
+[data-theme="dark"] .profile-cv-section .profile-bio {
+    background: var(--dark-bg-card);
+    color: var(--dark-text-secondary);
+    box-shadow: var(--dark-shadow-sm);
+}
+
+[data-theme="dark"] .profile-cv-section .cv-list-item {
+    background: var(--dark-bg-card);
+    box-shadow: var(--dark-shadow-sm);
+}
+
+[data-theme="dark"] .profile-cv-section .cv-list-item:hover {
+    box-shadow: var(--dark-shadow-md);
+}
+
+[data-theme="dark"] .profile-cv-section .cv-label {
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .profile-cv-section .cv-value {
+    color: var(--dark-text-secondary);
+}
+
+[data-theme="dark"] .book-section-outer {
+    background: var(--dark-bg-secondary);
+    box-shadow: var(--dark-shadow-md);
+}
+
+[data-theme="dark"] .book-section {
+    background: var(--dark-bg-card);
+    box-shadow: var(--dark-shadow-sm);
+}
+
+[data-theme="dark"] .book-section h4 {
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .book-divider {
+    border-top-color: var(--dark-border-primary);
+}
+
+[data-theme="dark"] .days-tab-row {
+    background: var(--dark-bg-secondary);
+    box-shadow: var(--dark-shadow-sm);
+}
+
+[data-theme="dark"] .days-tab-btn {
+    background: var(--dark-bg-card);
+    color: var(--dark-text-secondary);
+    box-shadow: var(--dark-shadow-sm);
+}
+
+[data-theme="dark"] .days-tab-btn.active,
+[data-theme="dark"] .days-tab-btn:active {
+    background: var(--dark-gradient-primary);
+    color: var(--dark-text-primary);
+    box-shadow: var(--dark-shadow-md);
+}
+
+[data-theme="dark"] .days-tab-btn:hover:not(.active) {
+    background: var(--dark-bg-tertiary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .slot-btn {
+    background: var(--dark-bg-secondary);
+    border-color: var(--dark-border-primary);
+    color: var(--dark-text-secondary);
+}
+
+[data-theme="dark"] .slot-btn.selected,
+[data-theme="dark"] .slot-btn:active {
+    background: var(--dark-gradient-primary);
+    color: var(--dark-text-primary);
+    border-color: var(--dark-border-focus);
+}
+
+[data-theme="dark"] .slot-btn:hover {
+    background: var(--dark-bg-tertiary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .no-slots {
+    color: var(--dark-text-muted);
+}
+
+/* Dark Theme Toggle Button */
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--dark-text-secondary);
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.theme-toggle-btn:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--dark-text-primary);
+    transform: scale(1.1);
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+    color: var(--dark-text-secondary);
+}
+
+[data-theme="dark"] .theme-toggle-btn:hover {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--dark-text-primary);
+}
+
+/* Dark Theme Utilities */
+[data-theme="dark"] .text-muted {
+    color: var(--dark-text-muted) !important;
+}
+
+[data-theme="dark"] .text-primary {
+    color: var(--dark-border-focus) !important;
+}
+
+[data-theme="dark"] .text-success {
+    color: var(--dark-success) !important;
+}
+
+[data-theme="dark"] .text-danger {
+    color: var(--dark-danger) !important;
+}
+
+[data-theme="dark"] .text-warning {
+    color: var(--dark-warning) !important;
+}
+
+[data-theme="dark"] .bg-primary {
+    background-color: var(--dark-border-focus) !important;
+}
+
+[data-theme="dark"] .bg-success {
+    background-color: var(--dark-success) !important;
+}
+
+[data-theme="dark"] .bg-danger {
+    background-color: var(--dark-danger) !important;
+}
+
+[data-theme="dark"] .bg-warning {
+    background-color: var(--dark-warning) !important;
+}
+
+/* Dark Theme Scrollbar */
+[data-theme="dark"] ::-webkit-scrollbar {
+    width: 8px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--dark-bg-secondary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: var(--dark-bg-tertiary);
+    border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: var(--dark-border-primary);
+}
+
+/* Dark Theme Transitions */
+[data-theme="dark"] * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark Theme Focus States */
+[data-theme="dark"] .btn:focus,
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Dark Theme Loading States */
+[data-theme="dark"] .spinner-border {
+    color: var(--dark-border-focus);
+}
+
+/* Dark Theme Notifications */
+[data-theme="dark"] .toast {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .toast-header {
+    background: var(--dark-bg-secondary);
+    border-bottom: 1px solid var(--dark-border-primary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .alert {
+    background: var(--dark-bg-secondary);
+    border: 1px solid var(--dark-border-primary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: var(--dark-success);
+    color: var(--dark-success);
+}
+
+[data-theme="dark"] .alert-danger {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--dark-danger);
+    color: var(--dark-danger);
+}
+
+[data-theme="dark"] .alert-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: var(--dark-warning);
+    color: var(--dark-warning);
+}
+
+[data-theme="dark"] .alert-info {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid var(--dark-border-focus);
+    color: var(--dark-text-primary);
+}
+
+/* Additional Dark Theme Styles for Patient Pages */
+
+/* Appointment Cards - Fix white background issue */
+[data-theme="dark"] .appointments-grid .card,
+[data-theme="dark"] .appointment-card,
+[data-theme="dark"] .appointment-item {
+    background: var(--dark-bg-card) !important;
+    border: 1px solid var(--dark-border-primary) !important;
+    color: var(--dark-text-primary) !important;
+}
+
+[data-theme="dark"] .appointments-grid .card:hover,
+[data-theme="dark"] .appointment-card:hover,
+[data-theme="dark"] .appointment-item:hover {
+    background: var(--dark-bg-secondary) !important;
+    box-shadow: var(--dark-shadow-md) !important;
+}
+
+/* Profile Cards - Fix white background issue */
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .form-card,
+[data-theme="dark"] .settings-card {
+    background: var(--dark-bg-card) !important;
+    border: 1px solid var(--dark-border-primary) !important;
+    color: var(--dark-text-primary) !important;
+}
+
+[data-theme="dark"] .profile-card:hover,
+[data-theme="dark"] .form-card:hover,
+[data-theme="dark"] .settings-card:hover {
+    background: var(--dark-bg-secondary) !important;
+    box-shadow: var(--dark-shadow-md) !important;
+}
+
+/* Week Tabs in Doctor Profile - Fix styling */
+[data-theme="dark"] .week-tabs .nav-tabs {
+    border-bottom: 1px solid var(--dark-border-primary);
+}
+
+[data-theme="dark"] .week-tabs .nav-tabs .nav-link {
+    background: var(--dark-bg-secondary);
+    border: 1px solid var(--dark-border-primary);
+    color: var(--dark-text-secondary);
+    margin-right: 0.25rem;
+}
+
+[data-theme="dark"] .week-tabs .nav-tabs .nav-link:hover {
+    background: var(--dark-bg-tertiary);
+    border-color: var(--dark-border-secondary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .week-tabs .nav-tabs .nav-link.active {
+    background: var(--dark-gradient-primary);
+    border-color: var(--dark-border-focus);
+    color: var(--dark-text-primary);
+}
+
+/* Days Tab Row */
+[data-theme="dark"] .days-tab-row .nav-tabs {
+    border-bottom: 1px solid var(--dark-border-primary);
+}
+
+[data-theme="dark"] .days-tab-row .nav-tabs .nav-link {
+    background: var(--dark-bg-secondary);
+    border: 1px solid var(--dark-border-primary);
+    color: var(--dark-text-secondary);
+    margin-right: 0.25rem;
+}
+
+[data-theme="dark"] .days-tab-row .nav-tabs .nav-link:hover {
+    background: var(--dark-bg-tertiary);
+    border-color: var(--dark-border-secondary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .days-tab-row .nav-tabs .nav-link.active {
+    background: var(--dark-gradient-primary);
+    border-color: var(--dark-border-focus);
+    color: var(--dark-text-primary);
+}
+
+/* Time Slots */
+[data-theme="dark"] .time-slots-container {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+}
+
+[data-theme="dark"] .time-slots-container .border-bottom {
+    border-bottom: 1px solid var(--dark-border-primary) !important;
+}
+
+/* Doctor Cards in Search Results */
+[data-theme="dark"] .doctors-grid .card,
+[data-theme="dark"] .doctor-search-result {
+    background: var(--dark-bg-card) !important;
+    border: 1px solid var(--dark-border-primary) !important;
+    color: var(--dark-text-primary) !important;
+}
+
+[data-theme="dark"] .doctors-grid .card:hover,
+[data-theme="dark"] .doctor-search-result:hover {
+    background: var(--dark-bg-secondary) !important;
+    box-shadow: var(--dark-shadow-md) !important;
+}
+
+/* Search Form Background */
+[data-theme="dark"] .search-form-bg {
+    background: var(--dark-bg-card) !important;
+    border: 1px solid var(--dark-border-primary) !important;
+}
+
+/* Profile Grid */
+[data-theme="dark"] .profile-grid {
+    background: transparent;
+}
+
+/* Form Groups */
+[data-theme="dark"] .form-group label {
+    color: var(--dark-text-primary) !important;
+}
+
+/* Settings Grid */
+[data-theme="dark"] .settings-grid {
+    background: transparent;
+}
+
+/* Danger Zone */
+[data-theme="dark"] .danger-zone {
+    border: 1px solid var(--dark-danger);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+/* Calendar Container */
+[data-theme="dark"] .calendar-container {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+}
+
+[data-theme="dark"] .calendar-header {
+    background: var(--dark-gradient-primary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .calendar-grid {
+    background: var(--dark-bg-secondary);
+}
+
+/* Stats Cards */
+[data-theme="dark"] .stats-card {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .stats-number {
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .stats-label {
+    color: var(--dark-text-secondary);
+}
+
+/* Book Appointment Page Specific Styles */
+
+/* Doctor Search Form */
+[data-theme="dark"] .doctor-search-form {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+[data-theme="dark"] .doctor-search-form .form-control {
+    background: var(--dark-bg-secondary);
+    border: 1px solid var(--dark-border-primary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .doctor-search-form .form-control:focus {
+    background: var(--dark-bg-secondary);
+    border-color: var(--dark-border-focus);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .doctor-search-form .form-control::placeholder {
+    color: var(--dark-text-muted);
+}
+
+/* Doctor Cards in Book Appointment Page */
+[data-theme="dark"] .doctor-card {
+    background: var(--dark-bg-card) !important;
+    border: 1px solid var(--dark-border-primary) !important;
+    color: var(--dark-text-primary) !important;
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .doctor-card:hover {
+    background: var(--dark-bg-secondary) !important;
+    box-shadow: var(--dark-shadow-md) !important;
+    transform: translateY(-2px);
+}
+
+[data-theme="dark"] .doctor-card .card-body {
+    background: var(--dark-bg-card) !important;
+    color: var(--dark-text-primary) !important;
+}
+
+[data-theme="dark"] .doctor-card .card-title {
+    color: var(--dark-text-primary) !important;
+}
+
+[data-theme="dark"] .doctor-card .card-text {
+    color: var(--dark-text-secondary) !important;
+}
+
+[data-theme="dark"] .doctor-card .card-text strong {
+    color: var(--dark-text-primary) !important;
+}
+
+[data-theme="dark"] .doctor-card .card-img-top {
+    border-bottom: 1px solid var(--dark-border-primary);
+}
+
+/* Specialty Badge */
+[data-theme="dark"] .specialty-badge {
+    background: var(--dark-gradient-primary) !important;
+    color: var(--dark-text-primary) !important;
+    border: none !important;
+}
+
+/* Load More Button */
+[data-theme="dark"] .load-more-btn {
+    background: var(--dark-gradient-primary);
+    border: none;
+    color: var(--dark-text-primary);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .load-more-btn:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    transform: translateY(-1px);
+    box-shadow: var(--dark-shadow-md);
+    color: var(--dark-text-primary);
+}
+
+/* No Results Section */
+[data-theme="dark"] .no-results {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+    border-radius: 8px;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--dark-text-secondary);
+}
+
+[data-theme="dark"] .no-results h4 {
+    color: var(--dark-text-primary);
+    margin-top: 1rem;
+}
+
+[data-theme="dark"] .no-results i {
+    color: var(--dark-text-muted);
+    font-size: 3rem;
+}
+
+/* Loading State */
+[data-theme="dark"] #loadingState .text-muted {
+    color: var(--dark-text-muted) !important;
+}
+
+/* City Selector Container */
+[data-theme="dark"] #citySelectorContainer {
+    background: var(--dark-bg-secondary);
+    border: 1px solid var(--dark-border-primary);
+    border-radius: 6px;
+}
+
+[data-theme="dark"] #citySelectorContainer .city-selector {
+    background: var(--dark-bg-secondary);
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] #citySelectorContainer .city-selector input {
+    background: var(--dark-bg-secondary);
+    border: none;
+    color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] #citySelectorContainer .city-selector input::placeholder {
+    color: var(--dark-text-muted);
+}
+
+[data-theme="dark"] #citySelectorContainer .city-selector .dropdown-menu {
+    background: var(--dark-bg-card);
+    border: 1px solid var(--dark-border-primary);
+    box-shadow: var(--dark-shadow-lg);
+}
+
+[data-theme="dark"] #citySelectorContainer .city-selector .dropdown-item {
+    color: var(--dark-text-secondary);
+}
+
+[data-theme="dark"] #citySelectorContainer .city-selector .dropdown-item:hover {
+    background: var(--dark-bg-tertiary);
+    color: var(--dark-text-primary);
+}
