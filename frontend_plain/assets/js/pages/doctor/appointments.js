@@ -18,8 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             appointments = res.data.content;
         }
     } catch (e) {
-        console.error('Failed to fetch appointments', e);
-        notificationService.error('Failed to load appointments.');
+        // Handle error silently
     }
 
     renderAppointments(appointments);

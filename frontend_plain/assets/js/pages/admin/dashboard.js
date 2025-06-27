@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (doctorsRes.data && doctorsRes.data.content) totalDoctors = doctorsRes.data.content.length;
         if (patientsRes.data && patientsRes.data.content) totalPatients = patientsRes.data.content.length;
     } catch (e) {
-        console.error('Failed to fetch user counts', e);
+        // Handle error silently
     }
     document.getElementById('totalUsersCount').textContent = totalUsers;
     document.getElementById('totalDoctorsCount').textContent = totalDoctors;

@@ -7,7 +7,7 @@ class BookAppointmentPage {
     constructor() {
         this.doctors = [];
         this.currentPage = 0;
-        this.pageSize = 20;
+        this.pageSize = 8;
         this.hasMore = true;
         this.loading = false;
         this.searchParams = { firstName: '', lastName: '', city: '', specialization: '' };
@@ -149,7 +149,7 @@ class BookAppointmentPage {
                         <span class="specialty-badge mb-2">${doctor.doctorProfileDTO?.specialty || 'General'}</span>
                         <h5 class="card-title">Dr. ${fullName}</h5>
                         <p class="card-text mb-1"><strong>City:</strong> ${doctor.city || '-'}</p>
-                        <p class="card-text mb-1"><strong>Experience:</strong> ${doctor.doctorProfileDTO?.experience || 0} years</p>
+                        <p class="card-text mb-1"><strong>Experience:</strong> ${doctor.doctorProfileDTO?.experience || '-'}</p>
                         <a class="btn btn-primary btn-sm w-100 mt-2" href="doctor-profile.html?id=${doctor.id}">
                             <i class="bi bi-person-lines-fill me-1"></i>Visit Profile
                         </a>

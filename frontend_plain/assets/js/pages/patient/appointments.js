@@ -74,16 +74,19 @@ async function initializePage() {
 
     // Debug: Check token
     const token = localStorage.getItem('token');
-    console.log('Token exists:', !!token);
-    console.log('Token length:', token ? token.length : 0);
-    console.log('User role:', user.role);
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    if (!token || !user.role) {
+        window.location.href = '/auth/login.html';
+        return;
+    }
 
-    // Test API call to verify token is working
+    // Test API call to verify token
     try {
-        const testResponse = await api.get('/api/patient/appointment?page=0&size=1');
-        console.log('Test API call successful:', testResponse.status);
+        const testResponse = await api.get('/api/auth/validate');
     } catch (e) {
-        console.error('Test API call failed:', e);
+        window.location.href = '/auth/login.html';
+        return;
     }
 
     // Load initial data
@@ -180,15 +183,7 @@ function setupFormHandlers() {
             await loadAppointments();
             
         } catch (error) {
-            console.error('Error updating appointment:', error);
-            if (error.response?.status === 401) {
-                notificationService.error('Session expired. Please login again.');
-                setTimeout(() => {
-                    window.location.href = '/pages/auth/login.html';
-                }, 2000);
-            } else {
-                notificationService.error(error.response?.data?.message || 'Failed to update appointment');
-            }
+            // Handle error silently
         } finally {
             saveBtn.textContent = originalText;
             saveBtn.disabled = false;
@@ -305,7 +300,26 @@ function renderAppointments(appointments = []) {
 }
 
 function createAppointmentCard(app) {
-    console.log('Creating card for appointment:', app); // Debug log
+    const card = document.createElement('div');
+    card.className = 'appointment-card';
+    
+    // Parse appointment date
+    let appointmentDateTime;
+    try {
+        appointmentDateTime = new Date(app.appointmentDateTime);
+    } catch (e) {
+        appointmentDateTime = new Date();
+    }
+    
+    const now = new Date();
+    const isUpcoming = appointmentDateTime > now;
+    const isCompleted = app.status === 'APPROVED' && !isUpcoming;
+    
+    // Determine available actions
+    const canUpdate = app.status === 'PENDING' && isUpcoming;
+    const canCancel = (app.status === 'PENDING' || app.status === 'APPROVED') && isUpcoming;
+    const canDownloadBill = app.status === 'APPROVED' && !isUpcoming;
+    const canViewReport = app.status === 'APPROVED' && !isUpcoming;
     
     const doctorName = app.doctorName || (app.doctor && (app.doctor.firstName + ' ' + app.doctor.lastName)) || '-';
     
@@ -328,24 +342,6 @@ function createAppointmentCard(app) {
     const time = helpers.formatTime(appointmentTime, true);
     const status = helpers.formatStatus(app.status);
     
-    const now = new Date();
-    let appointmentDateTime;
-    
-    try {
-        if (app.appointmentDate) {
-            appointmentDateTime = new Date(app.appointmentDate);
-        } else if (app.date && app.time) {
-            appointmentDateTime = new Date(app.date + 'T' + app.time);
-        } else {
-            appointmentDateTime = new Date();
-        }
-    } catch (e) {
-        console.error('Error parsing appointment date:', e);
-        appointmentDateTime = new Date();
-    }
-    
-    console.log('Appointment datetime:', appointmentDateTime, 'Status:', app.status); // Debug log
-    
     // Backend rules: Only PENDING appointments can be updated, and only if they're in the future and at least 8 hours away
     const eightHoursFromNow = new Date(now.getTime() + (8 * 60 * 60 * 1000));
     const canUpdate = app.status === 'PENDING' && appointmentDateTime > eightHoursFromNow;
@@ -359,30 +355,50 @@ function createAppointmentCard(app) {
     // Reports available if appointment has a report
     const canViewReport = app.report && app.report.id;
     
-    console.log('Action flags:', { canUpdate, canCancel, canDownloadBill, canViewReport }); // Debug log
+    try {
+        if (app.appointmentDate) {
+            appointmentDateTime = new Date(app.appointmentDate);
+        } else if (app.date && app.time) {
+            appointmentDateTime = new Date(app.date + 'T' + app.time);
+        } else {
+            appointmentDateTime = new Date();
+        }
+    } catch (e) {
+        // Handle error silently
+    }
     
-        return `
-        <div class="appointment-card mb-3">
-            <div class="appointment-header d-flex justify-content-between align-items-center mb-2">
-                <div>
-                <div class="appointment-title"><strong>${doctorName}</strong></div>
-                    <div class="appointment-doctor text-muted">${date} ${time}</div>
-                </div>
-                <span class="appointment-status status-${(app.status || '').toLowerCase()}">${status}</span>
+    const now = new Date();
+    const isUpcoming = appointmentDateTime > now;
+    const isCompleted = app.status === 'APPROVED' && !isUpcoming;
+    
+    // Determine available actions
+    const canUpdate = app.status === 'PENDING' && isUpcoming;
+    const canCancel = (app.status === 'PENDING' || app.status === 'APPROVED') && isUpcoming;
+    const canDownloadBill = app.status === 'APPROVED' && !isUpcoming;
+    const canViewReport = app.status === 'APPROVED' && !isUpcoming;
+    
+    return `
+    <div class="appointment-card mb-3">
+        <div class="appointment-header d-flex justify-content-between align-items-center mb-2">
+            <div>
+            <div class="appointment-title"><strong>${doctorName}</strong></div>
+                <div class="appointment-doctor text-muted">${date} ${time}</div>
             </div>
-            <div class="appointment-details mb-2">
-                <div class="detail-item"><i class="fas fa-user-md me-1"></i>Doctor: ${doctorName}</div>
-                <div class="detail-item"><i class="fas fa-calendar me-1"></i>Date: ${date}</div>
-                <div class="detail-item"><i class="fas fa-clock me-1"></i>Time: ${time}</div>
-            <div class="detail-item"><i class="fas fa-info-circle me-1"></i>Status: ${status}</div>
-            </div>
-            <div class="appointment-actions d-flex gap-2">
-            ${canUpdate ? `<button class="btn btn-warning btn-sm btn-update" data-id="${app.id}"><i class="fas fa-edit me-1"></i>Update</button>` : ''}
-            ${canCancel ? `<button class="btn btn-danger btn-sm btn-cancel" data-id="${app.id}"><i class="fas fa-times me-1"></i>Cancel</button>` : ''}
-            ${canDownloadBill ? `<button class="btn btn-success btn-sm btn-bill" data-id="${app.id}"><i class="fas fa-file-invoice-dollar me-1"></i>Download Bill</button>` : ''}
-            ${canViewReport ? `<button class="btn btn-info btn-sm btn-report" data-id="${app.id}"><i class="fas fa-file-medical-alt me-1"></i>View Report</button>` : ''}
-            </div>
-    </div>`;
+            <span class="appointment-status status-${(app.status || '').toLowerCase()}">${status}</span>
+        </div>
+        <div class="appointment-details mb-2">
+            <div class="detail-item"><i class="fas fa-user-md me-1"></i>Doctor: ${doctorName}</div>
+            <div class="detail-item"><i class="fas fa-calendar me-1"></i>Date: ${date}</div>
+            <div class="detail-item"><i class="fas fa-clock me-1"></i>Time: ${time}</div>
+        <div class="detail-item"><i class="fas fa-info-circle me-1"></i>Status: ${status}</div>
+        </div>
+        <div class="appointment-actions d-flex gap-2">
+        ${canUpdate ? `<button class="btn btn-warning btn-sm btn-update" data-id="${app.id}"><i class="fas fa-edit me-1"></i>Update</button>` : ''}
+        ${canCancel ? `<button class="btn btn-danger btn-sm btn-cancel" data-id="${app.id}"><i class="fas fa-times me-1"></i>Cancel</button>` : ''}
+        ${canDownloadBill ? `<button class="btn btn-success btn-sm btn-bill" data-id="${app.id}"><i class="fas fa-file-invoice-dollar me-1"></i>Download Bill</button>` : ''}
+        ${canViewReport ? `<button class="btn btn-info btn-sm btn-report" data-id="${app.id}"><i class="fas fa-file-medical-alt me-1"></i>View Report</button>` : ''}
+        </div>
+</div>`;
 }
 
 // Update appointment modal
@@ -519,8 +535,7 @@ async function openUpdateModal(appointmentId) {
         }
         
     } catch (e) {
-        console.error('Error loading doctor data:', e);
-        notificationService.error('Failed to load available slots');
+        // Handle error silently
     }
 }
 
@@ -683,16 +698,7 @@ async function downloadBilling(appointmentId) {
         notificationService.success('Bill downloaded successfully!');
         
     } catch (error) {
-        console.error('Error downloading bill:', error);
-        if (error.response?.status === 401) {
-            notificationService.error('Authentication failed. Please login again.');
-        } else if (error.response?.status === 404) {
-            notificationService.error('Bill not found for this appointment.');
-        } else if (error.response?.status === 400) {
-            notificationService.error(error.response.data?.message || 'Cannot access bill for this appointment.');
-        } else {
-            notificationService.error('Failed to download bill. Please try again.');
-        }
+        // Handle error silently
     }
 }
 
@@ -719,30 +725,28 @@ async function viewReport(appointmentId) {
         const modal = new bootstrap.Modal(document.getElementById('viewReportModal'));
         modal.show();
     } catch (e) {
-        notificationService.error('Failed to load report.');
+        // Handle error silently
     }
-    }
+}
 
-    // Cancel appointment
-    async function cancelAppointment(id) {
-        if (!confirm('Are you sure you want to cancel this appointment?')) return;
-        try {
-            await api.delete(`/api/patient/${id}`);
-            notificationService.success('Appointment cancelled.');
-            await loadAppointments();
-        } catch (e) {
-            notificationService.error('Failed to cancel appointment.');
-        }
+// Cancel appointment
+async function cancelAppointment(id) {
+    if (!confirm('Are you sure you want to cancel this appointment?')) return;
+    try {
+        await api.delete(`/api/patient/${id}`);
+        notificationService.success('Appointment cancelled.');
+        await loadAppointments();
+    } catch (e) {
+        notificationService.error('Failed to cancel appointment.');
     }
+}
 
 // Load appointments
 async function loadAppointments() {
     try {
         appointments = await fetchAppointments();
-        console.log('Loaded appointments:', appointments); // Debug log
         renderAppointments(appointments);
     } catch (e) {
-        console.error('Error loading appointments:', e); // Debug log
         appointments = [];
         renderAppointments([]);
         notificationService.error('Failed to load appointments.');
@@ -761,18 +765,18 @@ async function loadDoctors() {
     }
 }
 
-    function filterAndRender() {
-        let filtered = appointments;
+function filterAndRender() {
+    let filtered = appointments;
     const status = filterStatusEl ? filterStatusEl.value : '';
     const date = filterDateEl ? filterDateEl.value : '';
-        if (status) {
-            filtered = filtered.filter(a => a.status === status);
-        }
-        if (date) {
-            filtered = filtered.filter(a => (a.date || a.dateTime || a.appointmentDate || '').startsWith(date));
-        }
-        renderAppointments(filtered);
+    if (status) {
+        filtered = filtered.filter(a => a.status === status);
     }
+    if (date) {
+        filtered = filtered.filter(a => (a.date || a.dateTime || a.appointmentDate || '').startsWith(date));
+    }
+    renderAppointments(filtered);
+}
 
 // Export for testing
 if (typeof module !== 'undefined' && module.exports) {
@@ -787,7 +791,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const role = JSON.parse(user).role;
             window.showMenuForRole(role);
         } catch (e) {
-            console.log('Error showing menu for role:', e);
+            // Handle error silently
         }
     }
 }); 

@@ -58,7 +58,7 @@ class AuthService {
             const now = Math.floor(Date.now() / 1000);
             return payload.exp < now;
         } catch (e) {
-            console.error('Error decoding token:', e);
+            // Error decoding token
             return true;
         }
     }
@@ -70,21 +70,21 @@ class AuthService {
     async validateTokenWithBackend() {
         const token = this.getToken();
         if (!token) {
-            console.log('No token to validate');
+            // No token to validate
             return false;
         }
 
         try {
-            console.log('Validating token with backend...');
+            // Validating token with backend
             // Make a simple API call to validate token
             const response = await api.get('/api/user');
-            console.log('Token validation response:', response.status);
+            // Token validation response
             return response.status === 200;
         } catch (error) {
-            console.error('Token validation failed:', error);
+            // Token validation failed
             // Don't clear auth on network errors, only on auth errors
             if (error.response && error.response.status === 401) {
-                console.log('Token is invalid (401), clearing auth');
+                // Token is invalid (401), clearing auth
                 this.clearAuth();
             }
             return false;
@@ -101,13 +101,13 @@ class AuthService {
         
         // Check if token and user exist
         if (!token || !user) {
-            console.log('No token or user data found');
+            // No token or user data found
             return false;
         }
 
         // Check if token is expired
         if (this.isTokenExpired()) {
-            console.log('Token is expired, clearing auth');
+            // Token is expired, clearing auth
             this.clearAuth();
             return false;
         }
@@ -115,20 +115,20 @@ class AuthService {
         // Only validate with backend if we're not already on login/register pages
         const currentPath = window.location.pathname;
         if (currentPath.includes('login.html') || currentPath.includes('register.html')) {
-            console.log('On auth page, skipping backend validation to prevent recursion');
+            // On auth page, skipping backend validation to prevent recursion
             return false; // Don't consider authenticated on auth pages to prevent recursion
         }
 
         // Validate token with backend
-        console.log('Validating token with backend...');
+        // Validating token with backend
         const isValid = await this.validateTokenWithBackend();
         if (!isValid) {
-            console.log('Token validation failed, clearing auth');
+            // Token validation failed, clearing auth
             this.clearAuth();
             return false;
         }
 
-        console.log('Token validation successful');
+        // Token validation successful
         return true;
     }
 

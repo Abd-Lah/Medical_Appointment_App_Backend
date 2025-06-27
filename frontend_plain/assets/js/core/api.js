@@ -33,7 +33,7 @@ class ApiService {
                 return config;
             },
             (error) => {
-                console.error('Request interceptor error:', error);
+                // Request interceptor error
                 return Promise.reject(error);
             }
         );
@@ -46,10 +46,11 @@ class ApiService {
             },
             (error) => {
                 if (error.response && error.response.status === 401) {
-                    console.log('Unauthorized request detected');
+                    // Unauthorized request detected
                     // Only force logout if it's a critical endpoint (like /api/user)
                     const url = error.config?.url || '';
                     if (url.includes('/api/user') || url.includes('/api/auth')) {
+                        // Critical endpoint 401, forcing logout
                         console.log('Critical endpoint 401, forcing logout');
                         if (typeof authService !== 'undefined' && authService.forceLogout) {
                             authService.forceLogout();
@@ -66,6 +67,7 @@ class ApiService {
                             }
                         }
                     } else {
+                        // Non-critical endpoint 401, not forcing logout
                         console.log('Non-critical endpoint 401, not forcing logout:', url);
                         // For non-critical endpoints, just let the error propagate
                         // The calling code can handle it appropriately
@@ -83,14 +85,15 @@ class ApiService {
      * @param {Object} config - Axios request config
      */
     logRequest(config) {
-        console.log('=== REQUEST INTERCEPTOR ===');
-        console.log('Token from localStorage:', localStorage.getItem('token') ? 'EXISTS' : 'NOT FOUND');
-        console.log('Request URL:', config.url);
-        console.log('Request method:', config.method);
-        console.log('Request data type:', typeof config.data);
-        console.log('Is FormData:', config.data instanceof FormData);
+        // === REQUEST INTERCEPTOR ===
+        // Token from localStorage
+        // Request URL
+        // Request method
+        // Request data type
+        // Is FormData
         
         if (config.headers.Authorization) {
+            // Authorization header set
             console.log('Authorization header set:', config.headers.Authorization.substring(0, 20) + '...');
         }
         
@@ -102,7 +105,7 @@ class ApiService {
      * @param {Object} response - Axios response
      */
     logResponse(response) {
-        console.log(`✅ Response received: ${response.status} ${response.config.url}`);
+        // ✅ Response received
     }
 
     /**
@@ -110,12 +113,14 @@ class ApiService {
      * @param {Object} error - Axios error
      */
     handleResponseError(error) {
-        console.error('❌ Response error:', error.response?.status, error.response?.statusText);
+        // ❌ Response error
         if (error.response?.status === 401) {
+            // 401 Unauthorized in handleResponseError
             console.log('401 Unauthorized in handleResponseError');
             // Only force logout for critical endpoints
             const url = error.config?.url || '';
             if (url.includes('/api/user') || url.includes('/api/auth')) {
+                // Critical endpoint 401, forcing logout
                 console.log('Critical endpoint 401, forcing logout');
                 if (typeof authService !== 'undefined' && authService.forceLogout) {
                     authService.forceLogout();
@@ -132,6 +137,7 @@ class ApiService {
                     }
                 }
             } else {
+                // Non-critical endpoint 401, not forcing logout
                 console.log('Non-critical endpoint 401, not forcing logout:', url);
             }
         }

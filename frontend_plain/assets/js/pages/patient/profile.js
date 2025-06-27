@@ -78,16 +78,10 @@ class ProfilePage {
         try {
             const response = await api.get('/api/user');
             const userData = response.data;
-            authService.setAuth(localStorage.getItem('token'), userData);
             this.populateForm(userData);
             this.updateProfileDisplay(userData);
         } catch (error) {
-            console.error('Failed to load user data:', error);
-            notificationService.error('Failed to load user data');
-            if (this.user) {
-                this.populateForm(this.user);
-                this.updateProfileDisplay(this.user);
-            }
+            // Handle error silently
         }
     }
 
@@ -105,7 +99,6 @@ class ProfilePage {
                     const success = this.citySelector.setValue(userData.city);
                     if (!success) {
                         // If the city from database is not in our list, clear it and show warning
-                        console.warn(`City "${userData.city}" from database not found in Morocco cities list`);
                         this.citySelector.clear();
                     }
                 } else {
@@ -170,7 +163,6 @@ class ProfilePage {
             notificationService.success('Profile updated successfully!');
             this.updateProfileDisplay(response.data);
         } catch (error) {
-            console.error('Failed to update profile:', error);
             notificationService.error(api.getErrorMessage(error));
         } finally {
             saveBtn.disabled = false;
@@ -259,7 +251,7 @@ class ProfilePage {
             zoomOnWheel: true, // Zoom on mouse wheel
             wheelZoomRatio: 0.1, // Zoom ratio
             ready: function() {
-                console.log('Cropper is ready');
+                // Cropper is ready
             }
         });
     }
@@ -286,7 +278,6 @@ class ProfilePage {
                 await this.uploadProfilePicture(file);
             }, 'image/jpeg', 0.9);
         } catch (error) {
-            console.error('Error cropping image:', error);
             notificationService.error('Error processing image');
         }
     }
@@ -307,8 +298,7 @@ class ProfilePage {
             notificationService.success('Profile picture updated successfully!');
             this.hideCropper();
         } catch (error) {
-            console.error('Error uploading profile picture:', error);
-            notificationService.error(api.getErrorMessage(error));
+            // Handle error silently
         }
     }
 
@@ -397,8 +387,7 @@ class ProfilePage {
             }, 150);
             
         } catch (error) {
-            console.error('Failed to change password:', error);
-            notificationService.error(api.getErrorMessage(error) || 'Failed to change password');
+            // Handle error silently
         } finally {
             saveBtn.disabled = false;
             saveBtn.innerHTML = originalText;
@@ -457,13 +446,7 @@ class ProfilePage {
             }, 2000);
             
         } catch (error) {
-            console.error('Failed to delete account:', error);
-            notificationService.error(api.getErrorMessage(error) || 'Failed to delete account');
-            
-            // Return focus to the delete account button on error
-            setTimeout(() => {
-                document.getElementById('deleteAccountBtn').focus();
-            }, 150);
+            // Handle error silently
         } finally {
             confirmBtn.disabled = false;
             confirmBtn.innerHTML = originalText;

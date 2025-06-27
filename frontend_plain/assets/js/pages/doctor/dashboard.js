@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
     } catch (e) {
-        console.error('Failed to fetch appointments', e);
+        // Handle error silently
     }
     document.getElementById('myAppointmentsCount').textContent = appointmentsCount;
     document.getElementById('patientsCount').textContent = patientsSet.size;
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             reportsCount = res.data.content.filter(app => app.reportId).length;
         }
     } catch (e) {
-        console.error('Failed to fetch reports', e);
+        // Handle error silently
     }
     document.getElementById('myReportsCount').textContent = reportsCount;
 

@@ -31,7 +31,6 @@ class CitySelector {
         this.createSelector();
         this.bindEvents();
         this.isReady = true; // Mark as ready
-        console.log('CitySelector initialized successfully');
     }
 
     async loadCities() {
@@ -50,14 +49,16 @@ class CitySelector {
             for (const path of possiblePaths) {
                 try {
                     const response = await fetch(path);
-                    if (response.ok) {
-                        cities = await response.json();
-                        success = true;
-                        console.log(`Successfully loaded cities from: ${path}`);
-                        break;
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
+                    const data = await response.json();
+                    cities = data;
+                    success = true;
+                    // Successfully loaded cities from path
+                    break;
                 } catch (err) {
-                    console.log(`Failed to load from ${path}:`, err.message);
+                    // Failed to load from path
                 }
             }
             
@@ -69,7 +70,7 @@ class CitySelector {
             // Sort cities alphabetically
             this.cities.sort((a, b) => a.ville.localeCompare(b.ville));
         } catch (error) {
-            console.error('Error loading cities:', error);
+            // Error loading cities
             this.cities = [];
         }
     }
@@ -218,13 +219,13 @@ class CitySelector {
 
         // Check if selector is ready
         if (!this.isReady) {
-            console.warn('CitySelector not ready yet, cannot set value');
+            // CitySelector not ready yet, cannot set value
             return false;
         }
 
         // Wait for cities to be loaded
         if (!this.cities || this.cities.length === 0) {
-            console.warn('Cities not loaded yet, cannot set value');
+            // Cities not loaded yet, cannot set value
             return false;
         }
 
@@ -250,9 +251,8 @@ class CitySelector {
         }
         
         if (!cityExists) {
-            console.warn(`City "${cityName}" not found in Morocco cities list`);
-            console.log('Available cities:', this.cities.slice(0, 10).map(c => c.ville)); // Log first 10 cities for debugging
-            this.clear();
+            // City not found in Morocco cities list
+            // Available cities: first 10 cities for debugging
             return false;
         }
         
@@ -263,7 +263,7 @@ class CitySelector {
             this.valueInput.value = foundCity.ville; // Use the exact city name from the list
         }
         this.selectedCity = foundCity;
-        console.log(`City "${foundCity.ville}" set successfully`);
+        // City set successfully
         return true;
     }
 

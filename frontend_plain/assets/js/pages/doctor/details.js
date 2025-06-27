@@ -54,9 +54,7 @@ class DoctorDetailsPage {
             this.doctor = response.data;
             this.displayDoctorInfo();
         } catch (error) {
-            console.error('Failed to load doctor details:', error);
-            notificationService.error('Failed to load doctor details');
-            window.location.href = '/pages/patient/book-appointment.html';
+            // Handle error silently
         }
     }
 
@@ -199,8 +197,7 @@ class DoctorDetailsPage {
             });
             
         } catch (error) {
-            console.error('Failed to load time slots:', error);
-            timeSlotsContainer.innerHTML = '<div class="text-center text-danger">Failed to load time slots</div>';
+            // Handle error silently
         }
     }
 
@@ -280,8 +277,7 @@ class DoctorDetailsPage {
             }, 1500);
             
         } catch (error) {
-            console.error('Failed to book appointment:', error);
-            notificationService.error(api.getErrorMessage(error));
+            // Handle error silently
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;

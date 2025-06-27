@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const role = user.role;
             window.showMenuForRole(role);
         } catch (e) {
-            console.log('Error showing menu for role:', e);
+            // Handle error silently
         }
     }
 });
@@ -117,9 +117,7 @@ function loadDashboardStats(user) {
             document.getElementById('totalAppointmentsCount').textContent = total;
         })
         .catch(err => {
-            console.log('Failed to load appointments:', err);
-            document.getElementById('totalAppointmentsCount').textContent = '0';
-            // Don't show error notification for dashboard stats
+            // Handle error silently
         });
     
     // Reports - This endpoint doesn't exist, so we'll skip it
@@ -134,7 +132,6 @@ function loadDashboardStats(user) {
                 document.getElementById('reportsCount').textContent = Array.isArray(reports) ? reports.length : 0;
             })
             .catch(err => {
-                console.log('Failed to load reports:', err);
                 document.getElementById('reportsCount').textContent = '0';
             });
         */
