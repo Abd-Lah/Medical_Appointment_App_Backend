@@ -777,4 +777,17 @@ function filterAndRender() {
 // Export for testing
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { filterAppointments, fetchAppointments, fetchDoctors, renderAppointments, renderDoctorsGrid, createDoctorCard };
-} 
+}
+
+// Dynamically show menu for role
+document.addEventListener('DOMContentLoaded', function() {
+    const user = localStorage.getItem('user');
+    if (user && window.showMenuForRole) {
+        try {
+            const role = JSON.parse(user).role;
+            window.showMenuForRole(role);
+        } catch (e) {
+            console.log('Error showing menu for role:', e);
+        }
+    }
+}); 

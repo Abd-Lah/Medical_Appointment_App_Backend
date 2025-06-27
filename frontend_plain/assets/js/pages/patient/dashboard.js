@@ -77,6 +77,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             authService.logout();
         });
     }
+
+    // Dynamically show menu for role
+    if (user && window.showMenuForRole) {
+        try {
+            const role = user.role;
+            window.showMenuForRole(role);
+        } catch (e) {
+            console.log('Error showing menu for role:', e);
+        }
+    }
 });
 
 /**
