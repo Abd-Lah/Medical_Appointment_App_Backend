@@ -408,8 +408,19 @@ class NotificationService {
     }
 }
 
-// Create global instance
-const notificationService = new NotificationService();
+// Initialize notification service when DOM is loaded
+let notificationService;
+document.addEventListener('DOMContentLoaded', () => {
+    notificationService = new NotificationService();
+});
+
+// Global function for other modules to use
+function showNotification(message, type = 'info', duration = 5000) {
+    if (!notificationService) {
+        notificationService = new NotificationService();
+    }
+    return notificationService.show(message, type, duration);
+}
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {

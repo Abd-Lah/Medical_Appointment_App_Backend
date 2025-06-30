@@ -34,7 +34,6 @@ class ApiService {
             },
             (error) => {
                 // Request interceptor error
-                return Promise.reject(error);
             }
         );
 

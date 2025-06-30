@@ -90,6 +90,14 @@ document.addEventListener('DOMContentLoaded', () => {
     themeManager = new ThemeManager();
 });
 
+// Global function for other modules to use
+function initializeTheme() {
+    if (!themeManager) {
+        themeManager = new ThemeManager();
+    }
+    return themeManager;
+}
+
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ThemeManager;

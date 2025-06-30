@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Profile - MedApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+    <link href="../../assets/css/main.css" rel="stylesheet">
+    <link href="../../assets/css/components.css" rel="stylesheet">
+    <link href="../../assets/css/doctor.css" rel="stylesheet">
+    <link href="../../assets/css/dark-theme.css" rel="stylesheet">
+</head>
+<body class="doctor-profile-body">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light doctor-profile-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="dashboard.html">
+                <i class="fas fa-heartbeat me-2"></i>MedApp
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item role-doctor"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item role-doctor"><a class="nav-link" href="appointments.html">Appointments</a></li>
+                    <li class="nav-item role-doctor"><a class="nav-link active" href="profile.html">Profile</a></li>
+                    <li class="nav-item role-doctor"><a class="nav-link" href="#" id="logoutBtn">Logout</a></li>
+                    <li class="nav-item">
+                        <button class="nav-link theme-toggle-btn" id="themeToggleBtn" title="Toggle Dark Mode">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="doctor-profile-container">
+        <div class="doctor-page-header">
+            <h1><i class="fas fa-user-md me-3"></i>Doctor Profile</h1>
+            <p>Manage your professional information and profile settings with our modern interface</p>
+        </div>
+
+        <div class="doctor-profile-grid">
+            <!-- Profile Card -->
+            <div class="doctor-profile-card">
+                <div class="doctor-avatar-section">
+                    <div class="doctor-avatar-container">
+                        <img id="profileImage" class="doctor-avatar-image" src="../../assets/images/default-avatar.png" alt="Profile">
+                        <div class="doctor-avatar-upload" id="avatarUpload">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-profile-info">
+                        <div class="doctor-profile-name" id="profileName">Loading...</div>
+                        <div class="doctor-profile-role" id="profileRole">Loading...</div>
+                    </div>
+                    
+                    <div class="doctor-upload-hint">
+                        Click the camera icon to update your profile photo
+                    </div>
+                </div>
+
+                <!-- Hidden File Input -->
+                <input type="file" id="fileInput" class="d-none" accept="image/*">
+            </div>
+
+            <!-- Personal Information Form -->
+            <div class="doctor-form-card">
+                <div class="doctor-form-header">
+                    <h3><i class="fas fa-user-edit me-2"></i>Personal Information</h3>
+                    <p>Update your personal details and contact information</p>
+                </div>
+                
+                <form id="profileForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="firstName" class="doctor-form-label">First Name *</label>
+                            <input type="text" class="doctor-form-control" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="lastName" class="doctor-form-label">Last Name *</label>
+                            <input type="text" class="doctor-form-control" id="lastName" name="lastName" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="doctor-form-label">Email Address</label>
+                            <input type="email" class="doctor-form-control" id="email" name="email" disabled>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="doctor-form-label">Phone Number *</label>
+                            <input type="tel" class="doctor-form-control" id="phone" name="phone" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="citySelector" class="doctor-form-label">City *</label>
+                            <div id="citySelectorContainer">
+                                <input type="text" class="doctor-form-control" id="citySelector" name="city" placeholder="Select your city" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-form-actions">
+                        <button type="submit" class="doctor-btn doctor-btn-primary" id="saveBtn">
+                            <i class="fas fa-save me-2"></i>Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Professional Information and Account Settings Column -->
+            <div class="doctor-form-card">
+                <div class="doctor-form-header">
+                    <h3><i class="fas fa-stethoscope me-2"></i>Professional Information</h3>
+                    <p>Update your medical credentials and practice details</p>
+                </div>
+                
+                <form id="professionalForm">
+                    <!-- Basic Professional Info -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="specialty" class="doctor-form-label">Specialty *</label>
+                            <input type="text" class="doctor-form-control" id="specialty" name="specialty" required placeholder="e.g., Cardiology, Pediatrics">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="experience" class="doctor-form-label">Experience *</label>
+                            <input type="text" class="doctor-form-control" id="experience" name="experience" required placeholder="e.g., 5 years, Board Certified">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="qualifications" class="doctor-form-label">Qualifications</label>
+                            <input type="text" class="doctor-form-control" id="qualifications" name="qualifications" placeholder="e.g., MD, PhD, Board Certified">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="appointmentDuration" class="doctor-form-label">Appointment Duration (minutes) *</label>
+                            <input type="number" class="doctor-form-control" id="appointmentDuration" name="appointmentDuration" min="15" max="120" step="15" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="clinicAddress" class="doctor-form-label">Clinic Address</label>
+                        <input type="text" class="doctor-form-control" id="clinicAddress" name="clinicAddress" placeholder="Enter your clinic address">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="bio" class="doctor-form-label">Professional Bio</label>
+                        <textarea class="doctor-form-control" id="bio" name="bio" rows="4" placeholder="Tell patients about your background, expertise, and approach to care..."></textarea>
+                    </div>
+                    
+                    <!-- Working Schedule -->
+                    <div class="mb-3">
+                        <label class="doctor-form-label">Working Days *</label>
+                        <div class="doctor-working-days-container">
+                            <div class="doctor-form-check-inline">
+                                <input class="doctor-form-check-input" type="checkbox" id="monday" value="monday">
+                                <label class="doctor-form-check-label" for="monday">Monday</label>
+                            </div>
+                            <div class="doctor-form-check-inline">
+                                <input class="doctor-form-check-input" type="checkbox" id="tuesday" value="tuesday">
+                                <label class="doctor-form-check-label" for="tuesday">Tuesday</label>
+                            </div>
+                            <div class="doctor-form-check-inline">
+                                <input class="doctor-form-check-input" type="checkbox" id="wednesday" value="wednesday">
+                                <label class="doctor-form-check-label" for="wednesday">Wednesday</label>
+                            </div>
+                            <div class="doctor-form-check-inline">
+                                <input class="doctor-form-check-input" type="checkbox" id="thursday" value="thursday">
+                                <label class="doctor-form-check-label" for="thursday">Thursday</label>
+                            </div>
+                            <div class="doctor-form-check-inline">
+                                <input class="doctor-form-check-input" type="checkbox" id="friday" value="friday">
+                                <label class="doctor-form-check-label" for="friday">Friday</label>
+                            </div>
+                            <div class="doctor-form-check-inline">
+                                <input class="doctor-form-check-input" type="checkbox" id="saturday" value="saturday">
+                                <label class="doctor-form-check-label" for="saturday">Saturday</label>
+                            </div>
+                            <div class="doctor-form-check-inline">
+                                <input class="doctor-form-check-input" type="checkbox" id="sunday" value="sunday">
+                                <label class="doctor-form-check-label" for="sunday">Sunday</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Working Hours -->
+                    <div class="mb-3">
+                        <label class="doctor-form-label">Working Hours *</label>
+                        <div class="doctor-time-picker-container">
+                            <div class="doctor-time-group">
+                                <label for="startTime" class="doctor-time-label">Start Time</label>
+                                <div class="doctor-time-input-wrapper">
+                                    <input type="time" class="doctor-form-control doctor-time-input" id="startTime" name="startTime" required>
+                                    <div class="doctor-time-validation" id="startTimeValidation"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-time-group">
+                                <label for="endTime" class="doctor-time-label">End Time</label>
+                                <div class="doctor-time-input-wrapper">
+                                    <input type="time" class="doctor-form-control doctor-time-input" id="endTime" name="endTime" required>
+                                    <div class="doctor-time-validation" id="endTimeValidation"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-time-group">
+                                <label for="breakTimeStart" class="doctor-time-label">Break Start</label>
+                                <div class="doctor-time-input-wrapper">
+                                    <input type="time" class="doctor-form-control doctor-time-input" id="breakTimeStart" name="breakTimeStart">
+                                    <div class="doctor-time-validation" id="breakTimeStartValidation"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="doctor-time-group">
+                                <label for="breakTimeEnd" class="doctor-time-label">Break End</label>
+                                <div class="doctor-time-input-wrapper">
+                                    <input type="time" class="doctor-form-control doctor-time-input" id="breakTimeEnd" name="breakTimeEnd">
+                                    <div class="doctor-time-validation" id="breakTimeEndValidation"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="doctor-time-hint">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Set your working hours. Break time is optional but recommended for lunch.
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-form-actions">
+                        <button type="submit" class="doctor-btn doctor-btn-primary" id="saveProfessionalBtn">
+                            <i class="fas fa-save me-2"></i>Save Professional Info
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Account Settings -->
+            <div class="doctor-settings-card">
+                <div class="doctor-form-header">
+                    <h3><i class="fas fa-cog me-2"></i>Account Settings</h3>
+                    <p>Manage your account security and preferences</p>
+                </div>
+                
+                <div class="doctor-setting-item" id="changePasswordBtn">
+                    <div class="doctor-setting-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <div class="doctor-setting-info">
+                        <h4>Change Password</h4>
+                        <p>Update your account password for enhanced security</p>
+                    </div>
+                    <div class="doctor-setting-action">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <div class="doctor-setting-item danger-zone" id="deleteAccountBtn">
+                    <div class="doctor-setting-icon danger">
+                        <i class="fas fa-trash"></i>
+                    </div>
+                    <div class="doctor-setting-info">
+                        <h4>Delete Account</h4>
+                        <p>Permanently delete your account and all associated data</p>
+                    </div>
+                    <div class="doctor-setting-action">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="doctor-modal-content">
+                <div class="doctor-modal-header">
+                    <h5 class="doctor-modal-title">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="doctor-modal-body">
+                    <form id="changePasswordForm">
+                        <div class="mb-3">
+                            <label for="currentPassword" class="doctor-form-label">Current Password</label>
+                            <input type="password" class="doctor-form-control" id="currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="doctor-form-label">New Password</label>
+                            <input type="password" class="doctor-form-control" id="newPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="doctor-form-label">Confirm New Password</label>
+                            <input type="password" class="doctor-form-control" id="confirmPassword" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="doctor-modal-footer">
+                    <button type="button" class="doctor-btn doctor-btn-outline" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="changePasswordForm" class="doctor-btn doctor-btn-primary" id="savePasswordBtn">
+                        <i class="fas fa-save me-2"></i>Change Password
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="doctor-modal-content">
+                <div class="doctor-modal-header border-danger">
+                    <h5 class="doctor-modal-title text-danger">Delete Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="doctor-modal-body">
+                    <div class="doctor-alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Warning</h6>
+                        <p>This action cannot be undone. All your data, appointments, and profile information will be permanently deleted.</p>
+                    </div>
+                    <form id="deleteAccountForm" class="mt-3">
+                        <div class="mb-3">
+                            <label for="deletePassword" class="doctor-form-label">Enter your password to confirm</label>
+                            <input type="password" class="doctor-form-control" id="deletePassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="deleteConfirmPassword" class="doctor-form-label">Confirm your password</label>
+                            <input type="password" class="doctor-form-control" id="deleteConfirmPassword" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="doctor-modal-footer">
+                    <button type="button" class="doctor-btn doctor-btn-outline" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="deleteAccountForm" class="doctor-btn doctor-btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash me-2"></i>Delete Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Cropper Modal -->
+    <div class="modal fade" id="cropperModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="doctor-modal-content">
+                <div class="doctor-modal-header">
+                    <h5 class="doctor-modal-title">Crop Profile Picture</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="doctor-modal-body">
+                    <div id="cropperArea">
+                        <img id="cropperImage" src="" alt="Crop Image" style="max-width: 100%;">
+                    </div>
+                </div>
+                <div class="doctor-modal-footer">
+                    <button type="button" class="doctor-btn doctor-btn-outline" id="cancelCrop">Cancel</button>
+                    <button type="button" class="doctor-btn doctor-btn-primary" id="cropImage">
+                        <i class="fas fa-crop me-2"></i>Crop & Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="../../assets/js/core/api.js"></script>
+    <script src="../../assets/js/core/auth.js"></script>
+    <script src="../../assets/js/core/notifications.js"></script>
+    <script src="../../assets/js/core/theme.js"></script>
+    <script src="../../assets/js/utils/helpers.js"></script>
+    <script src="../../assets/js/utils/citySelector.js"></script>
+    <script src="../../assets/js/pages/doctor/profile.js"></script>
+</body>
+</html> 

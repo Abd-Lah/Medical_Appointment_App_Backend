@@ -18,7 +18,7 @@
 </head>
 <body class="doctor-profile-body">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <nav class="navbar navbar-expand-lg navbar-light doctor-profile-navbar">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold text-primary" href="dashboard.html">
                 <i class="fas fa-heartbeat me-2"></i>MedApp
@@ -49,58 +49,140 @@
             </div>
         </div>
     </nav>
-    <div class="container doctor-profile-container">
-        <div class="profile-cv-section">
-            <img id="doctorAvatar" class="profile-avatar" src="/assets/images/default-avatar.png" alt="Doctor Avatar">
-            <span class="specialty-badge" id="doctorSpecialty">Specialty</span>
-            <h2 id="doctorName">Dr. Name</h2>
-            <div class="profile-meta" id="doctorCity"><i class="bi bi-geo-alt me-1"></i>City</div>
-            <div class="profile-section-title">Who am I?</div>
-            <div class="profile-bio" id="doctorBio">Loading bio...</div>
-            <div class="profile-section-title">Professional Details</div>
-            <div class="cv-list">
-                <div class="cv-list-item"><i class="bi bi-award"></i><span class="cv-label">Experience:</span> <span class="cv-value" id="doctorExperience">-</span> </div>
-                <div class="cv-list-item"><i class="bi bi-mortarboard"></i><span class="cv-label">Qualifications:</span> <span class="cv-value" id="doctorQualifications">-</span></div>
-                <div class="cv-list-item"><i class="bi bi-building"></i><span class="cv-label">Clinic:</span> <span class="cv-value" id="doctorClinic">-</span></div>
-                <div class="cv-list-item"><i class="bi bi-calendar-week"></i><span class="cv-label">Working Days:</span> <span class="cv-value" id="doctorWorkingDays">-</span></div>
-                <div class="cv-list-item"><i class="bi bi-clock-history"></i><span class="cv-label">Duration:</span> <span class="cv-value" id="doctorDuration">-</span> min</div>
-            </div>
-        </div>
-        <div class="book-section-outer">
-            <div class="book-section mt-0">
-                <h4>Book an Appointment</h4>
-                <div class="book-divider"></div>
-                <div class="week-tabs">
-                    <ul class="nav nav-tabs" id="weekTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="thisWeek-tab" data-bs-toggle="tab" data-bs-target="#thisWeek" type="button" role="tab" aria-controls="thisWeek" aria-selected="true">This Week</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="nextWeek-tab" data-bs-toggle="tab" data-bs-target="#nextWeek" type="button" role="tab" aria-controls="nextWeek" aria-selected="false">Next Week</button>
-                        </li>
-                    </ul>
-                    <div class="tab-content" id="weekTabContent">
-                        <div class="tab-pane fade show active" id="thisWeek" role="tabpanel" aria-labelledby="thisWeek-tab">
-                            <div class="days-tab-row" id="daysTabThisWeek"></div>
-                            <div class="tab-content" id="daysTabContentThisWeek"></div>
-                        </div>
-                        <div class="tab-pane fade" id="nextWeek" role="tabpanel" aria-labelledby="nextWeek-tab">
-                            <div class="days-tab-row" id="daysTabNextWeek"></div>
-                            <div class="tab-content" id="daysTabContentNextWeek"></div>
+    
+    <div class="doctor-profile-container">
+        <div class="doctor-profile-grid">
+            <!-- Doctor Profile Card (Left Side - 70%) -->
+            <div class="doctor-profile-card">
+                <div class="doctor-avatar-section">
+                    <div class="doctor-avatar-container">
+                        <img id="doctorAvatar" class="doctor-avatar-image" src="/assets/images/default-avatar.png" alt="Doctor Avatar">
+                        <div class="doctor-avatar-overlay">
+                            <i class="fas fa-camera"></i>
                         </div>
                     </div>
                 </div>
-                <form id="bookAppointmentForm" class="hidden-form">
-                    <input type="hidden" id="bookDoctorId" name="doctorId">
-                    <input type="hidden" id="bookDate" name="date">
-                    <input type="hidden" id="bookTime" name="time">
-                    <div class="text-end mt-3">
-                        <button type="submit" class="btn btn-primary px-4">Book</button>
+                
+                <div class="doctor-profile-info">
+                    <div class="doctor-specialty-badge" id="doctorSpecialty">Specialty</div>
+                    <h2 class="doctor-profile-name" id="doctorName">Dr. Name</h2>
+                    <div class="doctor-location" id="doctorCity">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>City</span>
                     </div>
-                </form>
+                </div>
+                
+                <div class="doctor-profile-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-user-md"></i>
+                        About Me
+                    </h3>
+                    <div class="doctor-bio" id="doctorBio">Loading bio...</div>
+                </div>
+                
+                <div class="doctor-profile-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-certificate"></i>
+                        Professional Details
+                    </h3>
+                    <div class="doctor-details-grid">
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Experience</span>
+                                <span class="detail-value" id="doctorExperience">-</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Qualifications</span>
+                                <span class="detail-value" id="doctorQualifications">-</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Clinic</span>
+                                <span class="detail-value" id="doctorClinic">-</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-calendar-week"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Working Days</span>
+                                <span class="detail-value" id="doctorWorkingDays">-</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Session Duration</span>
+                                <span class="detail-value" id="doctorDuration">-</span> min
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Booking Section (Right Side - 30%) -->
+            <div class="doctor-booking-card">
+                <div class="booking-header">
+                    <h3 class="booking-title">
+                        <i class="fas fa-calendar-plus"></i>
+                        Book Appointment
+                    </h3>
+                    <p class="booking-subtitle">Select your preferred date and time</p>
+                </div>
+                
+                <div class="booking-content">
+                    <div class="week-tabs">
+                        <ul class="nav nav-tabs" id="weekTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="thisWeek-tab" data-bs-toggle="tab" data-bs-target="#thisWeek" type="button" role="tab" aria-controls="thisWeek" aria-selected="true">This Week</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="nextWeek-tab" data-bs-toggle="tab" data-bs-target="#nextWeek" type="button" role="tab" aria-controls="nextWeek" aria-selected="false">Next Week</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="weekTabContent">
+                            <div class="tab-pane fade show active" id="thisWeek" role="tabpanel" aria-labelledby="thisWeek-tab">
+                                <div class="days-tab-row" id="daysTabThisWeek"></div>
+                                <div class="tab-content" id="daysTabContentThisWeek"></div>
+                            </div>
+                            <div class="tab-pane fade" id="nextWeek" role="tabpanel" aria-labelledby="nextWeek-tab">
+                                <div class="days-tab-row" id="daysTabNextWeek"></div>
+                                <div class="tab-content" id="daysTabContentNextWeek"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form id="bookAppointmentForm" class="booking-form hidden-form">
+                        <input type="hidden" id="bookDoctorId" name="doctorId">
+                        <input type="hidden" id="bookDate" name="date">
+                        <input type="hidden" id="bookTime" name="time">
+                        <div class="booking-actions">
+                            <button type="submit" class="booking-btn">
+                                <i class="fas fa-check"></i>
+                                Book Appointment
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

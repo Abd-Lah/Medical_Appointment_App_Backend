@@ -334,113 +334,295 @@
     color: var(--dark-text-secondary);
 }
 
-/* Doctor Profile Dark Theme */
+/* ========================================
+   DOCTOR PROFILE DARK THEME
+   ======================================== */
+
 [data-theme="dark"] .doctor-profile-body {
-    background: var(--dark-bg-primary);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #e2e8f0;
 }
 
-[data-theme="dark"] .profile-cv-section {
-    background: var(--dark-bg-secondary);
-    box-shadow: var(--dark-shadow-md);
+[data-theme="dark"] .doctor-profile-navbar {
+  background: rgba(15, 23, 42, 0.95);
+  border-bottom: 1px solid #334155;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-[data-theme="dark"] .profile-cv-section h2 {
-    color: var(--dark-text-primary);
+[data-theme="dark"] .doctor-profile-navbar .navbar-brand {
+  color: #4f8cff !important;
 }
 
-[data-theme="dark"] .profile-cv-section .profile-meta {
-    color: var(--dark-text-secondary);
+[data-theme="dark"] .doctor-profile-navbar .nav-link {
+  color: #e2e8f0 !important;
 }
 
-[data-theme="dark"] .profile-cv-section .profile-section-title {
-    color: var(--dark-text-primary);
-    border-left-color: var(--dark-border-focus);
+[data-theme="dark"] .doctor-profile-navbar .nav-link:hover,
+[data-theme="dark"] .doctor-profile-navbar .nav-link.active {
+  color: #4f8cff !important;
 }
 
-[data-theme="dark"] .profile-cv-section .profile-bio {
-    background: var(--dark-bg-card);
-    color: var(--dark-text-secondary);
-    box-shadow: var(--dark-shadow-sm);
+[data-theme="dark"] .doctor-profile-navbar .dropdown-menu {
+  background: #1e293b;
+  border: 1px solid #334155;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-[data-theme="dark"] .profile-cv-section .cv-list-item {
-    background: var(--dark-bg-card);
-    box-shadow: var(--dark-shadow-sm);
+[data-theme="dark"] .doctor-profile-navbar .dropdown-item {
+  color: #e2e8f0;
 }
 
-[data-theme="dark"] .profile-cv-section .cv-list-item:hover {
-    box-shadow: var(--dark-shadow-md);
+[data-theme="dark"] .doctor-profile-navbar .dropdown-item:hover {
+  background: #334155;
+  color: #4f8cff;
 }
 
-[data-theme="dark"] .profile-cv-section .cv-label {
-    color: var(--dark-text-primary);
+/* Doctor Profile Card Dark Theme */
+[data-theme="dark"] .doctor-profile-card {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #334155;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
-[data-theme="dark"] .profile-cv-section .cv-value {
-    color: var(--dark-text-secondary);
+[data-theme="dark"] .doctor-profile-card:hover {
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
 }
 
-[data-theme="dark"] .book-section-outer {
-    background: var(--dark-bg-secondary);
-    box-shadow: var(--dark-shadow-md);
+[data-theme="dark"] .doctor-profile-name {
+  color: #f7fafc;
+  background: linear-gradient(135deg, #f7fafc 0%, #e2e8f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-[data-theme="dark"] .book-section {
-    background: var(--dark-bg-card);
-    box-shadow: var(--dark-shadow-sm);
+[data-theme="dark"] .doctor-location {
+  color: #a0aec0;
 }
 
-[data-theme="dark"] .book-section h4 {
-    color: var(--dark-text-primary);
+[data-theme="dark"] .doctor-location i {
+  color: #4f8cff;
 }
 
-[data-theme="dark"] .book-divider {
-    border-top-color: var(--dark-border-primary);
+[data-theme="dark"] .section-title {
+  color: #f7fafc;
+  border-bottom-color: #334155;
 }
 
-[data-theme="dark"] .days-tab-row {
-    background: var(--dark-bg-secondary);
-    box-shadow: var(--dark-shadow-sm);
+[data-theme="dark"] .section-title i {
+  color: #4f8cff;
 }
 
+[data-theme="dark"] .doctor-bio {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid #334155;
+  color: #a0aec0;
+}
+
+[data-theme="dark"] .doctor-bio:hover {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(79, 140, 255, 0.3);
+}
+
+[data-theme="dark"] .detail-item {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid #334155;
+}
+
+[data-theme="dark"] .detail-item:hover {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(79, 140, 255, 0.3);
+}
+
+[data-theme="dark"] .detail-icon {
+  background: linear-gradient(135deg, rgba(79, 140, 255, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+  color: #4f8cff;
+}
+
+[data-theme="dark"] .detail-item:hover .detail-icon {
+  background: linear-gradient(135deg, #4f8cff 0%, #3b82f6 100%);
+  color: white;
+}
+
+[data-theme="dark"] .detail-label {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .detail-value {
+  color: #a0aec0;
+}
+
+/* Doctor Booking Card Dark Theme */
+[data-theme="dark"] .doctor-booking-card {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #334155;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .doctor-booking-card:hover {
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .booking-title {
+  color: #f7fafc;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="dark"] .booking-title i {
+  color: #10b981;
+}
+
+[data-theme="dark"] .booking-subtitle {
+  color: #a0aec0;
+}
+
+/* Week Tabs Dark Theme */
+[data-theme="dark"] .week-tabs .nav-tabs {
+  border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .week-tabs .nav-tabs .nav-link {
+  color: #a0aec0;
+  background: transparent;
+}
+
+[data-theme="dark"] .week-tabs .nav-tabs .nav-link.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+[data-theme="dark"] .week-tabs .nav-tabs .nav-link:not(.active):hover {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+/* Days Tab Buttons Dark Theme */
 [data-theme="dark"] .days-tab-btn {
-    background: var(--dark-bg-card);
-    color: var(--dark-text-secondary);
-    box-shadow: var(--dark-shadow-sm);
+  background: #1e293b;
+  border: 2px solid #334155;
+  color: #a0aec0;
 }
 
 [data-theme="dark"] .days-tab-btn.active,
 [data-theme="dark"] .days-tab-btn:active {
-    background: var(--dark-gradient-primary);
-    color: var(--dark-text-primary);
-    box-shadow: var(--dark-shadow-md);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-color: #10b981;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
 [data-theme="dark"] .days-tab-btn:hover:not(.active) {
-    background: var(--dark-bg-tertiary);
-    color: var(--dark-text-primary);
+  border-color: #10b981;
+  color: #10b981;
 }
 
+/* Slot Buttons Dark Theme */
 [data-theme="dark"] .slot-btn {
-    background: var(--dark-bg-secondary);
-    border-color: var(--dark-border-primary);
-    color: var(--dark-text-secondary);
+  background: #1e293b;
+  border: 2px solid #334155;
+  color: #a0aec0;
 }
 
 [data-theme="dark"] .slot-btn.selected,
 [data-theme="dark"] .slot-btn:active {
-    background: var(--dark-gradient-primary);
-    color: var(--dark-text-primary);
-    border-color: var(--dark-border-focus);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-color: #10b981;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
 [data-theme="dark"] .slot-btn:hover {
-    background: var(--dark-bg-tertiary);
-    color: var(--dark-text-primary);
+  border-color: #10b981;
+  color: #10b981;
 }
 
+/* No Slots Dark Theme */
 [data-theme="dark"] .no-slots {
-    color: var(--dark-text-muted);
+  color: #a0aec0;
+}
+
+/* Booking Button Dark Theme */
+[data-theme="dark"] .booking-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+[data-theme="dark"] .booking-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+/* Avatar Container Dark Theme */
+[data-theme="dark"] .doctor-avatar-container {
+  background: linear-gradient(135deg, rgba(79, 140, 255, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+  border: 3px solid rgba(79, 140, 255, 0.3);
+}
+
+[data-theme="dark"] .doctor-avatar-container:hover {
+  background: linear-gradient(135deg, rgba(79, 140, 255, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%);
+  border-color: rgba(79, 140, 255, 0.5);
+}
+
+[data-theme="dark"] .doctor-avatar-image {
+  border: 8px solid rgba(30, 41, 59, 0.9);
+}
+
+[data-theme="dark"] .doctor-avatar-image:hover {
+  border-color: rgba(30, 41, 59, 1);
+}
+
+[data-theme="dark"] .doctor-avatar-overlay {
+  background: linear-gradient(135deg, #4f8cff 0%, #3b82f6 100%);
+  border: 3px solid rgba(30, 41, 59, 0.9);
+}
+
+/* Specialty Badge Dark Theme */
+[data-theme="dark"] .doctor-specialty-badge {
+  background: linear-gradient(135deg, #4f8cff 0%, #3b82f6 100%);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .doctor-specialty-badge:hover {
+  box-shadow: 0 12px 35px rgba(79, 140, 255, 0.4);
+}
+
+/* Tab Content Dark Theme */
+[data-theme="dark"] .week-tabs .tab-content {
+  background: transparent;
+}
+
+[data-theme="dark"] .week-tabs .tab-pane {
+  background: transparent;
+}
+
+/* Form Elements Dark Theme */
+[data-theme="dark"] .booking-form {
+  background: transparent;
+}
+
+[data-theme="dark"] .booking-actions {
+  background: transparent;
+}
+
+/* Responsive Dark Theme Adjustments */
+@media (max-width: 768px) {
+  [data-theme="dark"] .doctor-profile-card,
+  [data-theme="dark"] .doctor-booking-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  }
+}
+
+@media (max-width: 576px) {
+  [data-theme="dark"] .doctor-profile-card,
+  [data-theme="dark"] .doctor-booking-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  }
 }
 
 /* Dark Theme Toggle Button */
@@ -901,4 +1083,48 @@
 [data-theme="dark"] #citySelectorContainer .city-selector .dropdown-item:hover {
     background: var(--dark-bg-tertiary);
     color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .doctor-avatar-container {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+[data-theme="dark"] .doctor-avatar-container:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+}
+
+[data-theme="dark"] .doctor-avatar-image {
+  border: 6px solid rgba(30, 41, 59, 0.9);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .doctor-avatar-image:hover {
+  border-color: rgba(30, 41, 59, 1);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .doctor-profile-name {
+  background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="dark"] .doctor-profile-role {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+[data-theme="dark"] .doctor-upload-hint {
+  background: rgba(51, 65, 85, 0.8);
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  color: var(--dark-text-muted);
+}
+
+[data-theme="dark"] .doctor-upload-hint:hover {
+  background: rgba(51, 65, 85, 0.95);
+  border-color: rgba(102, 126, 234, 0.3);
 }

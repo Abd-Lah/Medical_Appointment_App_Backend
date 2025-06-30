@@ -65,8 +65,6 @@ if (typeof showMenuForRole === 'undefined' && typeof window !== 'undefined' && w
 
 // Initialize page data
 async function initializePage() {
-    // Require authentication
-    if (!(await authService.requireAuth('../pages/auth/login.html'))) return;
     const user = authService.getUser();
     if (typeof showMenuForRole !== 'undefined') {
         showMenuForRole(user.role);
@@ -74,7 +72,6 @@ async function initializePage() {
 
     // Debug: Check token
     const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
     
     if (!token || !user.role) {
         window.location.href = '/auth/login.html';
