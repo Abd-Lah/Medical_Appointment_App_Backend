@@ -13,6 +13,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const response = await api.get('/api/user');
             user = response.data;
         }
+        // Role-based access control
+        if (!user || user.role !== 'PATIENT') {
+            authService.redirectByRole(user);
+            return;
+        }
     } catch (e) {
         // fallback: redirect to login if not authenticated
         window.location.href = '../../pages/auth/login.html';

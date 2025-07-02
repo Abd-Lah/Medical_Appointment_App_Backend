@@ -284,7 +284,7 @@ class AuthService {
     redirectByRole(user) {
         if (!user || !user.role) {
             console.error('Invalid user data for role-based redirect');
-            this.redirectToDashboard();
+            this.redirectToLogin();
             return;
         }
 
@@ -296,8 +296,11 @@ class AuthService {
                 this.redirectToAdminDashboard();
                 break;
             case 'PATIENT':
-            default:
                 this.redirectToDashboard();
+                break;
+            default:
+                // Instead of redirecting to patient dashboard, redirect to login
+                this.redirectToLogin();
                 break;
         }
     }
