@@ -260,6 +260,25 @@ class ApiService {
     }
 
     /**
+     * Make a PATCH request
+     * @param {string} url - API endpoint
+     * @param {Object} data - Request data
+     * @param {Object} config - Additional axios config
+     * @returns {Promise} Promise that resolves with response data
+     */
+    async patch(url, data = {}, config = {}) {
+        try {
+            const response = await axios.patch(`${this.baseURL}${url}`, data, {
+                headers: this.defaultHeaders,
+                ...config
+            });
+            return response;
+        } catch (error) {
+            throw this.handleError(error);
+        }
+    }
+
+    /**
      * Handle API errors and provide meaningful messages
      * @param {Object} error - Axios error
      * @returns {Error} Enhanced error with user-friendly message
@@ -443,4 +462,7 @@ const api = new ApiService();
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ApiService;
-} 
+}
+
+// Make API service globally available
+window.api = new ApiService(); 

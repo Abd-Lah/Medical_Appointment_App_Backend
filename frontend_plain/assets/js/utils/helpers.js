@@ -282,4 +282,6 @@ const helpers = HelperUtils;
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = HelperUtils;
-} 
+}
+
+window.helpers = HelperUtils; 

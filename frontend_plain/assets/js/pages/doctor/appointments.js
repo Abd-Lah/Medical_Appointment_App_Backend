@@ -129,8 +129,8 @@ async function fetchAppointments() {
     try {
         const res = await api.get('/api/doctor/appointment');
         return res.data.content || res.data || [];
-    } catch {
-        return [];
+    } catch (error) {
+        throw error; // Pass error up so loadAppointments can show notification
     }
 }
 
@@ -173,7 +173,9 @@ function createAppointmentCard(app) {
     }
     
     const date = helpers.formatDate(appointmentDateTime, 'MM/DD/YYYY');
-    const time = helpers.formatTime(appointmentDateTime, 'HH:mm');
+    const hours = String(appointmentDateTime.getHours()).padStart(2, '0');
+    const minutes = String(appointmentDateTime.getMinutes()).padStart(2, '0');
+    const time = helpers.formatTime(`${hours}:${minutes}`, 'HH:mm');
     const status = helpers.formatStatus(app.status);
     
     // Determine available actions based on status
@@ -329,6 +331,6 @@ async function loadAppointments() {
         appointments = [];
         appointmentsCache = [];
         renderAppointments([]);
-        notificationService.error('Failed to load appointments.');
+        notificationService.error(api.getErrorMessage(e) || 'Failed to load appointments.');
     }
 } 

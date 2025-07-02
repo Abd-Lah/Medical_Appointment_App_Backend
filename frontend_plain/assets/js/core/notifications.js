@@ -409,17 +409,16 @@ class NotificationService {
 }
 
 // Initialize notification service when DOM is loaded
-let notificationService;
 document.addEventListener('DOMContentLoaded', () => {
-    notificationService = new NotificationService();
+    window.notificationService = new NotificationService();
 });
 
 // Global function for other modules to use
 function showNotification(message, type = 'info', duration = 5000) {
-    if (!notificationService) {
-        notificationService = new NotificationService();
+    if (!window.notificationService) {
+        window.notificationService = new NotificationService();
     }
-    return notificationService.show(message, type, duration);
+    return window.notificationService.show(message, type, duration);
 }
 
 // Export for use in other modules
