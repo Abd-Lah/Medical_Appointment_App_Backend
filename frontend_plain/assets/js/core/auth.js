@@ -185,29 +185,23 @@ class AuthService {
     async login(credentials) {
         try {
             console.log('Attempting login with credentials:', { email: credentials.email });
-            
             const response = await api.post('/api/auth/login', credentials);
             console.log('Login response received:', response.data);
-            
             const responseData = response.data;
-            
-            // Check if we have the required fields
-            if (!responseData.token) {
-                console.error('No token in response:', responseData);
-                throw new Error('No token received from server');
+            // Ensure user object includes role
+            let user = responseData.user || {};
+            if (responseData.role) {
+                user.role = responseData.role;
+            } else if (!user.role && responseData.userRole) {
+                user.role = responseData.userRole;
             }
-
-            // Create user object from response data
-            const user = {
-                email: responseData.email,
-                firstName: responseData.firstName,
-                lastName: responseData.lastName,
-                phoneNumber: responseData.phoneNumber,
-                role: responseData.role,
-                name: `${responseData.firstName || ''} ${responseData.lastName || ''}`.trim() || responseData.email
-            };
-
-            console.log('Created user object:', user);
+            // Fallback: try to get role from JWT if not present
+            if (!user.role && responseData.token) {
+                try {
+                    const payload = JSON.parse(atob(responseData.token.split('.')[1]));
+                    if (payload && payload.role) user.role = payload.role;
+                } catch (e) {}
+            }
             this.setAuth(responseData.token, user);
             return user;
         } catch (error) {

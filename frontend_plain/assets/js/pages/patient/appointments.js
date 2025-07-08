@@ -65,33 +65,36 @@ if (typeof showMenuForRole === 'undefined' && typeof window !== 'undefined' && w
 
 // Initialize page data
 async function initializePage() {
-    const user = authService.getUser();
-    if (typeof showMenuForRole !== 'undefined') {
-        showMenuForRole(user.role);
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('login.html') || currentPath.includes('register.html')) {
+        return;
     }
 
-    // Debug: Check token
+    const userRaw = localStorage.getItem('user');
     const token = localStorage.getItem('token');
-    
-    if (!token || !user.role) {
-        window.location.href = '/auth/login.html';
+
+    // Only redirect if both are missing
+    if (!token && !userRaw) {
+        window.location.href = '../../pages/auth/login.html';
         return;
     }
 
-    // Test API call to verify token
+    // If token is present, always try to load appointments
     try {
-        const testResponse = await api.get('/api/auth/validate');
+        await loadAppointments();
+        await loadDoctors();
+        setupFormHandlers();
     } catch (e) {
-        window.location.href = '/auth/login.html';
-        return;
+        // If any API call returns 401, log out
+        if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '../../pages/auth/login.html';
+            return;
+        } else {
+            notificationService.error('Network error. Please check your connection.');
+        }
     }
-
-    // Load initial data
-    await loadAppointments();
-    await loadDoctors();
-
-    // Setup form handlers
-    setupFormHandlers();
 }
 
 // Setup form handlers
@@ -197,14 +200,14 @@ function setupFormHandlers() {
 
 // Fetch and render appointments and doctors
 function filterAppointments() {
+    let filtered = appointments;
     const status = filterStatusEl ? filterStatusEl.value : '';
     const date = filterDateEl ? filterDateEl.value : '';
-    let filtered = appointments;
     if (status) {
         filtered = filtered.filter(a => a.status === status);
     }
     if (date) {
-        filtered = filtered.filter(a => (a.date || a.dateTime || a.appointmentDate || '').startsWith(date));
+        filtered = filtered.filter(a => (a.appointmentDate || '').startsWith(date));
     }
     renderAppointments(filtered);
 }
@@ -297,83 +300,44 @@ function renderAppointments(appointments = []) {
 }
 
 function createAppointmentCard(app) {
-    const card = document.createElement('div');
-    card.className = 'appointment-card';
-    
     // Parse appointment date
     let appointmentDateTime;
     try {
-        appointmentDateTime = new Date(app.appointmentDateTime);
+        appointmentDateTime = new Date(app.appointmentDate);
     } catch (e) {
         appointmentDateTime = new Date();
     }
-    
     const now = new Date();
     const isUpcoming = appointmentDateTime > now;
     const isCompleted = app.status === 'APPROVED' && !isUpcoming;
-    
+
     // Determine available actions
-    const canUpdate = app.status === 'PENDING' && isUpcoming;
-    const canCancel = (app.status === 'PENDING' || app.status === 'APPROVED') && isUpcoming;
-    const canDownloadBill = app.status === 'APPROVED' && !isUpcoming;
-    const canViewReport = app.status === 'APPROVED' && !isUpcoming;
-    
-    const doctorName = app.doctorName || (app.doctor && (app.doctor.firstName + ' ' + app.doctor.lastName)) || '-';
-    
-    // Handle different date formats from backend
-    let appointmentDate, appointmentTime;
+    let canUpdate = app.status === 'PENDING' && isUpcoming;
+    let canCancel = (app.status === 'PENDING' || app.status === 'APPROVED') && isUpcoming;
+    let canDownloadBill = app.status === 'APPROVED' && !isUpcoming;
+    let canViewReport = app.status === 'APPROVED' && !isUpcoming;
+
+    // Doctor name extraction
+    const doctorName = app.doctor ? `${app.doctor.firstName || ''} ${app.doctor.lastName || ''}`.trim() : '-';
+
+    // Date and time formatting
+    let appointmentDate = 'Unknown', appointmentTime = 'Unknown';
     if (app.appointmentDate) {
-        // Backend sends LocalDateTime as string
         const dateTime = new Date(app.appointmentDate);
         appointmentDate = dateTime.toISOString().split('T')[0];
         appointmentTime = dateTime.toTimeString().slice(0, 5);
-    } else if (app.date) {
-        appointmentDate = app.date;
-        appointmentTime = app.time || '00:00';
-    } else {
-        appointmentDate = 'Unknown';
-        appointmentTime = 'Unknown';
     }
-    
     const date = helpers.formatDate(appointmentDate, 'MM/DD/YYYY');
     const time = helpers.formatTime(appointmentTime, true);
     const status = helpers.formatStatus(app.status);
-    
+
     // Backend rules: Only PENDING appointments can be updated, and only if they're in the future and at least 8 hours away
     const eightHoursFromNow = new Date(now.getTime() + (8 * 60 * 60 * 1000));
-    const canUpdate = app.status === 'PENDING' && appointmentDateTime > eightHoursFromNow;
-    
-    // Backend rules: Can cancel PENDING and APPROVED appointments if they're at least 8 hours away
-    const canCancel = ['PENDING', 'APPROVED'].includes(app.status) && appointmentDateTime > eightHoursFromNow;
-    
-    // Backend rules: Bills available for PENDING and APPROVED appointments (not cancelled or past)
-    const canDownloadBill = ['PENDING', 'APPROVED'].includes(app.status) && appointmentDateTime > now;
-    
-    // Reports available if appointment has a report
-    const canViewReport = app.report && app.report.id;
-    
-    try {
-        if (app.appointmentDate) {
-            appointmentDateTime = new Date(app.appointmentDate);
-        } else if (app.date && app.time) {
-            appointmentDateTime = new Date(app.date + 'T' + app.time);
-        } else {
-            appointmentDateTime = new Date();
-        }
-    } catch (e) {
-        // Handle error silently
-    }
-    
-    const now = new Date();
-    const isUpcoming = appointmentDateTime > now;
-    const isCompleted = app.status === 'APPROVED' && !isUpcoming;
-    
-    // Determine available actions
-    const canUpdate = app.status === 'PENDING' && isUpcoming;
-    const canCancel = (app.status === 'PENDING' || app.status === 'APPROVED') && isUpcoming;
-    const canDownloadBill = app.status === 'APPROVED' && !isUpcoming;
-    const canViewReport = app.status === 'APPROVED' && !isUpcoming;
-    
+    canUpdate = app.status === 'PENDING' && appointmentDateTime > eightHoursFromNow;
+    canCancel = ['PENDING', 'APPROVED'].includes(app.status) && appointmentDateTime > eightHoursFromNow;
+    canDownloadBill = ['PENDING', 'APPROVED'].includes(app.status) && appointmentDateTime > now;
+    canViewReport = app.report && app.report.id;
+
     return `
     <div class="appointment-card mb-3">
         <div class="appointment-header d-flex justify-content-between align-items-center mb-2">
@@ -770,7 +734,7 @@ function filterAndRender() {
         filtered = filtered.filter(a => a.status === status);
     }
     if (date) {
-        filtered = filtered.filter(a => (a.date || a.dateTime || a.appointmentDate || '').startsWith(date));
+        filtered = filtered.filter(a => (a.appointmentDate || '').startsWith(date));
     }
     renderAppointments(filtered);
 }

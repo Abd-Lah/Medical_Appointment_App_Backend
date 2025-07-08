@@ -21,15 +21,11 @@ class ApiService {
         axios.interceptors.request.use(
             (config) => {
                 this.logRequest(config);
-                
-                // Add authorization header if token exists and endpoint is not public
+                // Always attach token if present
                 const token = localStorage.getItem('token');
-                const isPublicEndpoint = this.isPublicEndpoint(config.url);
-                
-                if (token && !isPublicEndpoint) {
+                if (token) {
                     config.headers.Authorization = `Bearer ${token}`;
                 }
-                
                 return config;
             },
             (error) => {
@@ -46,9 +42,9 @@ class ApiService {
             (error) => {
                 if (error.response && error.response.status === 401) {
                     // Unauthorized request detected
-                    // Only force logout if it's a critical endpoint (like /api/user)
                     const url = error.config?.url || '';
-                    if (url.includes('/api/user') || url.includes('/api/auth')) {
+                    // Only force logout if it's a critical endpoint (/api/auth/validate or /api/user)
+                    if (url.includes('/api/auth/validate') || url.includes('/api/user')) {
                         // Critical endpoint 401, forcing logout
                         console.log('Critical endpoint 401, forcing logout');
                         if (typeof authService !== 'undefined' && authService.forceLogout) {
@@ -113,33 +109,9 @@ class ApiService {
      */
     handleResponseError(error) {
         // ❌ Response error
-        if (error.response?.status === 401) {
-            // 401 Unauthorized in handleResponseError
-            console.log('401 Unauthorized in handleResponseError');
-            // Only force logout for critical endpoints
-            const url = error.config?.url || '';
-            if (url.includes('/api/user') || url.includes('/api/auth')) {
-                // Critical endpoint 401, forcing logout
-                console.log('Critical endpoint 401, forcing logout');
-                if (typeof authService !== 'undefined' && authService.forceLogout) {
-                    authService.forceLogout();
-                } else {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('user');
-                    const currentPath = window.location.pathname;
-                    if (!currentPath.includes('login.html') && !currentPath.includes('register.html')) {
-                        if (currentPath.includes('/pages/')) {
-                            window.location.href = '/pages/auth/login.html';
-                        } else {
-                            window.location.href = '/pages/auth/login.html';
-                        }
-                    }
-                }
-            } else {
-                // Non-critical endpoint 401, not forcing logout
-                console.log('Non-critical endpoint 401, not forcing logout:', url);
-            }
-        }
+        // Remove 401 Unauthorized handling from here to avoid double logout/redirect
+        // Only the main response interceptor should handle 401s for /api/auth/validate and /api/user
+        // ... keep any other error handling logic here ...
     }
 
     /**

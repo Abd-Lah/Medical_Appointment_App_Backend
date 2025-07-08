@@ -48,14 +48,14 @@ public class UserController {
     }
 
     @GetMapping("/all_doctors")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PATIENT', 'DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PATIENT')")
     public ResponseEntity<Page<DoctorDto>> doctors(Pageable pageable) {
         Page<UserEntity> users = userService.getAllUsersByRole("DOCTOR", pageable);
         return new ResponseEntity<>(DoctorMapper.INSTANCE.toDtoPage(users), HttpStatus.OK);
     }
 
     @GetMapping("/doctors")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PATIENT', 'DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PATIENT')")
     public ResponseEntity<Page<DoctorDto>> doctor(
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName,
@@ -70,7 +70,7 @@ public class UserController {
 
 
     @GetMapping("/doctor/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PATIENT', 'DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PATIENT')")
     public ResponseEntity<DoctorDto> doctor(@PathVariable String id) {
         UserEntity user = userService.getDoctor(id);
         DoctorDto dto = DoctorMapper.INSTANCE.toDto(user);

@@ -27,10 +27,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Set welcome name (prefer full name, fallback to email)
     const nameSpan = document.getElementById('dashboardUserName');
     if (nameSpan && user) {
-        let displayName = user.firstName ? user.firstName : '';
-        if (user.lastName) displayName += ' ' + user.lastName;
-        if (!displayName.trim()) displayName = user.email;
-        nameSpan.textContent = displayName.trim();
+        let displayName = '';
+        if (user.firstName) displayName += user.firstName;
+        if (user.lastName) displayName += (displayName ? ' ' : '') + user.lastName;
+        displayName = (displayName || '').trim();
+        if (!displayName) displayName = user.email || '';
+        nameSpan.textContent = displayName;
     }
 
     // Load dashboard stats (numbers)

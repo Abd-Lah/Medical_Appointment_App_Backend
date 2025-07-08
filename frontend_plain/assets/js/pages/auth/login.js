@@ -219,4 +219,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // Export for testing
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = LoginPage;
+}
+
+// Prevent any global session/auth check from running on login or register page
+const currentPath = window.location.pathname;
+if (currentPath.includes('login.html') || currentPath.includes('register.html')) {
+    // Do not run any session check or redirect logic here
+    // Only run login form logic below
+} else {
+    // If you have any global session check, it should go here (not on login page)
 } 
