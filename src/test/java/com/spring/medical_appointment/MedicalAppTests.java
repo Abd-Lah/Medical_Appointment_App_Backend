@@ -1,10 +1,10 @@
-package com.spring.demo_relationship;
+package com.spring.medical_appointment;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DemoRelationshipApplicationTests {
+class MedicalAppTests {
 
     @Test
     void contextLoads() {

@@ -1,0 +1,57 @@
+services:
+  frontend:
+    build:
+      context: ./frontend   # folder with your HTML, CSS, JS, images, and Dockerfile
+    image: frontend:v1
+    ports:
+      - "5500:80"
+    networks:
+      - medical
+    depends_on:
+      - backend-service
+
+  backend-service:
+    container_name: medical-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: backend:1.0
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/doctor
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      APP_UPLOAD_DIR: /app/uploads/profile-pictures
+      APP_BILLING_DIR: /app/bills
+    ports:
+      - "8080:8080"
+    networks:
+      - medical
+    depends_on:
+      - database
+    volumes:
+      - backend_uploads:/app/uploads
+      - backend_bills:/app/bills
+
+  database:
+    container_name: database
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: doctor
+    ports:
+      - "5431:5432"
+    restart: unless-stopped
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - medical
+
+networks:
+  medical:
+    driver: bridge
+
+volumes:
+  db: { }
+  backend_uploads: { }
+  backend_bills: { }
